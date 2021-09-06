@@ -16,6 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from rest_server import views
+
 urlpatterns = [
+    path('', views.index, name='index'),
     path('admin/', admin.site.urls),
+    path('reports/', views.ReportList.as_view()),
+    path('reports/<int:pk>/', views.ReportDetail.as_view()),
+    path('complex-reports/', views.ComplexReportList.as_view()),
+
+    path('disk-usages/', views.DiskUsageList.as_view()),
 ]
