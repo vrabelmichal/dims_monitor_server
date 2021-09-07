@@ -50,12 +50,14 @@ class ComplexReportList(APIView):
         except json.decoder.JSONDecodeError:
             return Response(data=dict(status=f'Cannot parse measurement data as JSON'), status=status.HTTP_400_BAD_REQUEST)
 
-        rns = ReportNestedSerializer(data=dict(
+        rns_data = dict(
             start_utc=request.data['start_utc'],
             hash=request.data['hash'],
             station='dims_0', # TODO
             **measurements_dict
-        ))
+        )
+
+        rns = ReportNestedSerializer(data=rns_data)
 
         if rns.is_valid():
             rns.save()

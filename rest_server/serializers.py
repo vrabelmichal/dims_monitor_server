@@ -27,7 +27,7 @@ class DiskUsageNestedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DiskUsage
-        fields = ['disk_partition', 'total', 'used', 'free', 'report']
+        fields = ['disk_partition', 'total', 'used', 'free']  # 'report' intentionally not included
 
     def create(self, validated_data):
         disk_partition_data = validated_data.pop('disk_partition')
@@ -37,7 +37,7 @@ class DiskUsageNestedSerializer(serializers.ModelSerializer):
 
 class ReportNestedSerializer(serializers.ModelSerializer):
 
-    disk_usage = DiskUsageSerializer(many=True, read_only=False)  # intentionally singular
+    disk_usage = DiskUsageNestedSerializer(many=True, read_only=False)  # intentionally singular
 
     class Meta:
         model = Report
@@ -50,7 +50,8 @@ class ReportNestedSerializer(serializers.ModelSerializer):
         disk_usages_data = validated_data.pop('disk_usage')
         report = Report.objects.get_or_create(**validated_data)
         for disk_usage_data in disk_usages_data:
-            ds = DiskUsageSerializer(data=disk_usage_data) # this might not work
+            disk_usage_data['report'] = report  # this might be incorrect
+            ds = DiskUsageNestedSerializer(data=disk_usage_data)  # this might not work
             if ds.is_valid():
                 ds.save()
         return report
