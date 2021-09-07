@@ -3,6 +3,8 @@ import json
 from django.http import Http404
 from django.shortcuts import render
 from rest_framework import status, mixins, generics
+from rest_framework.authentication import BasicAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import HttpResponse
@@ -17,22 +19,33 @@ def index(request):
 
 
 class ReportList(generics.ListCreateAPIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     queryset = Report.objects.all()
     serializer_class = ReportSerializer
 
 
 class ReportDetail(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     queryset = Report.objects.all()
     serializer_class = ReportSerializer
     # not really needed
 
 
 class DiskUsageList(generics.ListCreateAPIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     queryset = DiskUsage.objects.all()
     serializer_class = DiskUsageSerializer
 
 
 class ComplexReportList(APIView):
+    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     # monitor_name_serializer_mapping = dict(
     #     hdd_usage=DiskUsageSerializer,
@@ -53,7 +66,7 @@ class ComplexReportList(APIView):
         rns_data = dict(
             start_utc=request.data['start_utc'],
             hash=request.data['hash'],
-            station='dims_0', # TODO
+            station=request.user.username, #'dims_0', # TODO
             **measurements_dict
         )
 
@@ -61,20 +74,27 @@ class ComplexReportList(APIView):
 
         if rns.is_valid():
             rns.save()
-            return Response(rns.data, status=status.HTTP_201_CREATED)
+            return Response(data=dict(status='Success'), status=status.HTTP_201_CREATED)
             # return Response(data=dict(status='Success'), status=status.HTTP_201_CREATED)
 
         return Response(rns.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # repser = ReportSerializer(data=dict(
-        #     start_utc=request['start_utc'],
-        #     station='USER',#request['station']
-        #     hash=request['hash'],
-        # ))
-        #
-        #
-        # for monitor_name in measurements_dict:
-        #     pass
-        #
-        # pass
-        # return Response(data=dict(status='Success'), status=status.HTTP_201_CREATED)
+
+# https://www.django-rest-framework.org/api-guide/parsers/#fileuploadparser
+
+# # views.py
+# class FileUploadView(views.APIView):
+#     parser_classes = [FileUploadParser]
+#
+#     def put(self, request, filename, format=None):
+#         file_obj = request.data['file']
+#         # ...
+#         # do some stuff with uploaded file
+#         # ...
+#         return Response(status=204)
+#
+# # urls.py
+# urlpatterns = [
+#     # ...
+#     re_path(r'^upload/(?P<filename>[^/]+)$', FileUploadView.as_view())
+# ]
