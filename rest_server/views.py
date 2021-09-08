@@ -1,8 +1,6 @@
 import json
 
-from django.http import Http404
-from django.shortcuts import render
-from rest_framework import status, mixins, generics
+from rest_framework import status
 from rest_framework.authentication import BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,8 +8,10 @@ from rest_framework.views import APIView
 from django.http import HttpResponse
 from rest_framework import generics
 
-from rest_server.models import Report, DiskUsage
-from rest_server.serializers import ReportSerializer, DiskUsageSerializer, ReportNestedSerializer
+from rest_server.models import DiskUsage
+from rest_server.models import Report
+from rest_server.serializers import DiskUsageSerializer
+from rest_server.serializers import ReportSerializer, ReportNestedSerializer
 
 
 def index(request):
