@@ -1,21 +1,13 @@
 import json
 
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.authentication import BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.http import HttpResponse
-from rest_framework import generics
 
-from rest_server.models import DiskUsage
 from rest_server.models import Report
-from rest_server.serializers import DiskUsageSerializer
 from rest_server.serializers import ReportSerializer, ReportNestedSerializer
-
-
-def index(request):
-    return HttpResponse("Dashboard")
 
 
 class ReportList(generics.ListCreateAPIView):
@@ -33,14 +25,6 @@ class ReportDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Report.objects.all()
     serializer_class = ReportSerializer
     # not really needed
-
-
-class DiskUsageList(generics.ListCreateAPIView):
-    authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    queryset = DiskUsage.objects.all()
-    serializer_class = DiskUsageSerializer
 
 
 class ComplexReportList(APIView):
@@ -74,27 +58,7 @@ class ComplexReportList(APIView):
 
         if rns.is_valid():
             rns.save()
-            return Response(data=dict(status='Success'), status=status.HTTP_201_CREATED)
+            return Response(data=dict(status='Created'), status=status.HTTP_201_CREATED)
             # return Response(data=dict(status='Success'), status=status.HTTP_201_CREATED)
 
         return Response(rns.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# https://www.django-rest-framework.org/api-guide/parsers/#fileuploadparser
-
-# # views.py
-# class FileUploadView(views.APIView):
-#     parser_classes = [FileUploadParser]
-#
-#     def put(self, request, filename, format=None):
-#         file_obj = request.data['file']
-#         # ...
-#         # do some stuff with uploaded file
-#         # ...
-#         return Response(status=204)
-#
-# # urls.py
-# urlpatterns = [
-#     # ...
-#     re_path(r'^upload/(?P<filename>[^/]+)$', FileUploadView.as_view())
-# ]

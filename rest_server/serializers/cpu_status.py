@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from rest_server.models import Report
-from rest_server.models.cpu_status import CpuStatus
+from rest_server.models import Report, CpuStatus
 
 
 class CpuStatusSerializer(serializers.ModelSerializer):
@@ -13,13 +12,11 @@ class CpuStatusSerializer(serializers.ModelSerializer):
 class CpuStatusNestedSerializer(serializers.ModelSerializer):
 
     # not required for validation
-    # report is presumed to be already existing before the creation of disk usage
-
+    # report is presumed to be already existing before the creation of cpu status
     report = serializers.PrimaryKeyRelatedField(
         many=False, read_only=False, required=False,
         queryset=Report.objects.all()
     )
-
 
     class Meta:
         model = CpuStatus

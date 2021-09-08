@@ -4,6 +4,9 @@ from rest_server.models import Report
 from rest_server.utils import model2str
 
 class CpuStatus(models.Model):
+    cpu_id = models.CharField(default='all', max_length=15,
+                              verbose_name='Unique identifier of a CPU ("all" for measurements across all CPUs)')
+
     cpu_freq_mean = models.FloatField(verbose_name='Mean CPU Frequency')
     cpu_freq_min = models.FloatField(verbose_name='Minimum CPU Frequency')
     cpu_freq_max = models.FloatField(verbose_name='Maximum CPU Frequency')

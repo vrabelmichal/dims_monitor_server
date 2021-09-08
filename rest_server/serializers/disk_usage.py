@@ -12,7 +12,7 @@ class DiskPartitionSerializer(serializers.ModelSerializer):
 class DiskUsageSerializer(serializers.ModelSerializer):
     class Meta:
         model = DiskUsage
-        fields = ['hdd_partition', 'total', 'used', 'free', 'report']
+        fields = ['disk_partition', 'total', 'used', 'free', 'report']
 
 
 class DiskUsageNestedSerializer(serializers.ModelSerializer):
