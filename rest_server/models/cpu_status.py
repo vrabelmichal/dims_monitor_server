@@ -62,8 +62,8 @@ class CpuStatus(models.Model):
     cpu_time_steal = models.FloatField(help_text='Time spent by other operating systems running in a virtualized environment (Linux)')
     cpu_time_guest = models.FloatField(help_text='Time spent running a virtual CPU for guest operating systems under the control of the Linux kernel (Linux)')
     cpu_time_guest_nice = models.FloatField(help_text='Time spent running a niced guest (Linux)')
-    cpu_time_interrupt_min = models.FloatField(help_text='Time spent for servicing hardware interrupts (Windows)')
-    cpu_time_dpc_min = models.FloatField(help_text='Time spent servicing deferred procedure calls (DPCs) (Windows);'
+    cpu_time_interrupt = models.FloatField(help_text='Time spent for servicing hardware interrupts (Windows)')
+    cpu_time_dpc = models.FloatField(help_text='Time spent servicing deferred procedure calls (DPCs) (Windows);'
                                                    ' DPCs are interrupts that run at a lower priority than standard interrupts.')
 
     load_avg_1min = models.FloatField(help_text='The average system load over the last 1 min')
