@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 
 from rest_server.models import Report, \
     OhmHardwareInformation, OhmSensorInformation, OhmSensorParameter, OhmSensorMeasurement
+from rest_server.serializers.fields.timestamp import TimestampField
 
 
 class OhmHardwareInformationSerializer(serializers.ModelSerializer):
@@ -46,6 +47,7 @@ class OhmSensorInformationNestedSerializer(serializers.ModelSerializer):
 
 class OhmSensorMeasurementNestedSerializer(serializers.ModelSerializer):
 
+    timestamp = TimestampField()
     sensor = OhmSensorInformationNestedSerializer(many=False, read_only=False)
 
     # not required for validation

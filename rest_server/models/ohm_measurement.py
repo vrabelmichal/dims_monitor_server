@@ -20,7 +20,8 @@ class OhmSensorInformation(models.Model):
     hardware = models.ForeignKey(OhmHardwareInformation, on_delete=models.CASCADE)
 
     def __str__(self):
-        return model2str(self)
+        # return model2str(self)
+        return f'Sensor (id: {self.id}, name: "{self.name}", type: "{self.type}")'
 
 
 class OhmSensorParameter(models.Model):

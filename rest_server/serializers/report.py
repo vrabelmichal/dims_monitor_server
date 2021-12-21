@@ -1,34 +1,32 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.serializers import ListSerializer
 
 from rest_server.models import Report
 from rest_server.serializers.cpu_status import CpuStatusNestedSerializer
 from rest_server.serializers.disk_usage import DiskUsageNestedSerializer
-
-
-# TODO move this into a configuration file
+from rest_server.serializers.memory_usage import MemoryUsageNestedSerializer
 from rest_server.serializers.ohm_measurement import OhmSensorMeasurementNestedSerializer
-
-ACQUIRED_MODULES = ['disk_usage', 'cpu_status', 'ohm']
 
 # MODULE_SERIALIZER_MAPPING = dict(
 #     disk_usage=DiskUsageNestedSerializer,
 #     cpu_status=CpuStatusNestedSerializer
 # )
 
+ACQUIRED_MODULES = ['disk_usage', 'memory_usage',
+                    'cpu_status', 'ohm']
+
 
 class ReportNestedSerializer(serializers.ModelSerializer):
 
     disk_usage = DiskUsageNestedSerializer(many=True, read_only=False, required=False)  # intentionally singular
+    memory_usage = MemoryUsageNestedSerializer(many=True, read_only=False, required=False)  # intentionally singular
     cpu_status = CpuStatusNestedSerializer(many=True, read_only=False, required=False)
     ohm = OhmSensorMeasurementNestedSerializer(many=True, read_only=False, required=False)
 
     class Meta:
         model = Report
-        fields = [
-            'start_utc', 'hash', 'station',
-            'disk_usage', 'cpu_status', 'ohm'
-        ]
+        fields = ['start_utc', 'hash', 'station', *ACQUIRED_MODULES]
 
     def create(self, validated_data):
 
@@ -44,10 +42,15 @@ class ReportNestedSerializer(serializers.ModelSerializer):
             if not isinstance(module_data, (list, tuple)):
                 module_data = [module_data]
 
-            module_serializer_cls = getattr(self, module_name)
-            if module_serializer_cls is None:
+            module_serializer = self.fields.fields.get(module_name)
+            if module_serializer is None:
                 # This should never happen
                 raise RuntimeError(f'Invalid module name: "{module_name}"')
+
+            if isinstance(module_serializer, ListSerializer):
+                module_serializer = module_serializer.child
+
+            module_serializer_cls = module_serializer.__class__
 
             for module_data_entry in module_data:
                 module_data_entry['report'] = report.id

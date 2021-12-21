@@ -16,9 +16,9 @@ class DiskPartition(models.Model):
 
 class DiskUsage(models.Model):
     disk_partition = models.ForeignKey(DiskPartition, on_delete=models.CASCADE)
-    total = models.PositiveBigIntegerField()
-    used = models.PositiveBigIntegerField()
-    free = models.PositiveBigIntegerField()
+    total = models.BigIntegerField()
+    used = models.BigIntegerField()
+    free = models.BigIntegerField()
 
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
 
