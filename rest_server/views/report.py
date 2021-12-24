@@ -1,3 +1,4 @@
+import datetime
 import json
 
 from rest_framework import generics, status
@@ -50,6 +51,7 @@ class ComplexReportList(APIView):
         rns_data = dict(
             start_utc=request.data['start_utc'],
             hash=request.data['hash'],
+            retrieved_utc=datetime.datetime.utcnow(),
             station=request.user.username, #'dims_0', # TODO
             **measurements_dict
         )

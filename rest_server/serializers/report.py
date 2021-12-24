@@ -26,7 +26,7 @@ class ReportNestedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Report
-        fields = ['start_utc', 'hash', 'station', *ACQUIRED_MODULES]
+        fields = ['start_utc', 'retrieved_utc', 'hash', 'station', *ACQUIRED_MODULES]
 
     def create(self, validated_data):
 

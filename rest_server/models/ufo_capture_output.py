@@ -51,13 +51,19 @@ class UfoCaptureOutputEntry(models.Model):
         help_text='Type of the UFOCapture entry'
 
     )
+
+    filename_datetime = models.DateTimeField(
+        help_text='Datetime value derived from from UFOCapture file.',
+        null=True
+    )
+
     version = models.CharField(
         max_length=20,
         help_text='Value of attribute "version" of ufocapture_record inside UFOCapture XML file.',
         null=True
     )
-    datetime = models.DateTimeField(
-        help_text = 'Datetime value from from UFOCapture XML file.',
+    xml_datetime = models.DateTimeField(
+        help_text='Datetime value from from UFOCapture XML file.',
         null=True
     )
     trig = models.IntegerField(
