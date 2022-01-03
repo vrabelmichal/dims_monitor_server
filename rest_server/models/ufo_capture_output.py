@@ -44,12 +44,13 @@ class UfoCaptureOutputEntry(models.Model):
         help_text='Filename of a xml file on the remote station. '
     )
     type = models.CharField(
-        max_length=1,
+        max_length=3,
         choices=[
-            ('r', 'Recording'),
-            ('t', 'Trigger')
+            ('rec', 'Recording'),
+            ('trg', 'Trigger'),
+            ('tmp', 'Temporary'),
         ],
-        help_text='Type of the UFOCapture entry'
+        help_text='Type of the UFOCapture entry determined from the name of a file'
 
     )
 
