@@ -14,17 +14,26 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
+from django.views.generic import RedirectView
 
 import rest_server.views.index
 
 import rest_server.views.report
 
 import rest_server.views.disk_usage
+from dims_monitor_server import settings
 from rest_server import views
+from django.conf.urls.static import static
+from django.views.static import serve
 
 urlpatterns = [
     path('', rest_server.views.index, name='index'),
+    re_path(r'^favicon\.ico$', serve, kwargs=dict(
+        document_root=settings.BASE_DIR / 'rest_server' / 'static',
+        path='favicon.ico'
+    )),
+
     path('admin/', admin.site.urls),
 
     path('api/complex-reports/', rest_server.views.ComplexReportList.as_view()),
@@ -32,4 +41,5 @@ urlpatterns = [
     path('api/reports/', rest_server.views.ReportList.as_view()),
     path('api/reports/<int:pk>/', rest_server.views.ReportDetail.as_view()),
     path('api/disk-usages/', rest_server.views.DiskUsageList.as_view()),
+    path('api/ufo-capture-output/latest', rest_server.views.latest_ufo_capture_file),
 ]

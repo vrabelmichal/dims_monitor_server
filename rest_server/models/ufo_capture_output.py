@@ -44,6 +44,7 @@ class UfoCaptureOutputEntry(models.Model):
         help_text='Filename of a xml file on the remote station. '
     )
     type = models.CharField(
+        max_length=1,
         choices=[
             ('r', 'Recording'),
             ('t', 'Trigger')
