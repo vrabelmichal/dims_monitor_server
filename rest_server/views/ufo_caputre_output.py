@@ -12,7 +12,7 @@ def latest_ufo_capture_file(request):
     station = request.user
 
     ufo_capture_entries_set = UfoCaptureOutputEntry.objects \
-        .filter(report__station=station) \
+        .filter(station__name=station) \
         .order_by('-filename_datetime')[:1]
 
     if ufo_capture_entries_set.count() > 0:

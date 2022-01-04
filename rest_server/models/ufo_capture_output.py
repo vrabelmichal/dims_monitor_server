@@ -1,6 +1,7 @@
 from django.db import models
 
-from rest_server.models import Report
+from rest_server.models.station import Station
+from rest_server.models.report import Report
 from rest_server.utils import model2str
 
 
@@ -10,38 +11,45 @@ class UfoCaptureOutputEntry(models.Model):
         max_length=260,
         help_text='Filename of a file on the remote station. '
                   'One frame at the trigger will be saved as a still image. '
-                  'Exclusive with PeakHold setting.'
+                  'Exclusive with PeakHold setting.',
+        blank=True, null=True
     )
     peak_hold_filename = models.CharField(
         max_length=260,
         help_text='Filename of a file on the remote station. '
                   'Automatic composite still image which contains the peak brightness of each pixel'
-                  ' during the detection will be saved as a still image.'
+                  ' during the detection will be saved as a still image.',
+        blank=True, null=True
     )
     thumbnail_filename = models.CharField(
         max_length=260,
         help_text='Filename of a file on the remote station. '
-                  'Small size jpeg image for realtime transfer.'
+                  'Small size jpeg image for realtime transfer.',
+        blank=True, null=True
     )
 
     # ???
     internal_thumbnail_pathname = models.CharField(
         max_length=260,
-        help_text='Pathname of the thumbnail stored on the server.'
+        help_text='Pathname of the thumbnail stored on the server.',
+        blank=True, null=True
     )
 
     map_filename = models.CharField(
         max_length=260,
         help_text='Filename of a file on the remote station. '
-                  '*M.bmp which contains layered information of the event.'
+                  '*M.bmp which contains layered information of the event.',
+        blank=True, null=True
     )
     clip_filename = models.CharField(
         max_length=260,
-        help_text='Filename of a clip file on the remote station.'
+        help_text='Filename of a clip file on the remote station.',
+        # blank=True, null=True
     )
     xml_filename = models.CharField(
         max_length=260,
-        help_text='Filename of a xml file on the remote station. '
+        help_text='Filename of a xml file on the remote station. ',
+        blank=True, null=True
     )
     type = models.CharField(
         max_length=3,
@@ -51,7 +59,6 @@ class UfoCaptureOutputEntry(models.Model):
             ('tmp', 'Temporary'),
         ],
         help_text='Type of the UFOCapture entry determined from the name of a file'
-
     )
 
     filename_datetime = models.DateTimeField(
@@ -62,7 +69,7 @@ class UfoCaptureOutputEntry(models.Model):
     version = models.CharField(
         max_length=20,
         help_text='Value of attribute "version" of ufocapture_record inside UFOCapture XML file.',
-        null=True
+        blank=True, null=True
     )
     xml_datetime = models.DateTimeField(
         help_text='Datetime value from from UFOCapture XML file.',
@@ -90,7 +97,8 @@ class UfoCaptureOutputEntry(models.Model):
     )
     tz = models.CharField(
         max_length=20,
-        help_text='Value of attribute "tz" of ufocapture_record inside UFOCapture XML file.'
+        help_text='Value of attribute "tz" of ufocapture_record inside UFOCapture XML file.',
+        blank=True, null=True
     )
     u2 = models.IntegerField(
         help_text='Value of attribute "u2" of ufocapture_record inside UFOCapture XML file.'
@@ -136,42 +144,42 @@ class UfoCaptureOutputEntry(models.Model):
     countrycode = models.CharField(
         max_length=2,
         help_text='Value of attribute "countrycode" of ufocapture_record inside UFOCapture XML file.',
-        null=True
+        blank=True, null=True
     )
     lid = models.CharField(
         max_length=16,
         help_text='Value of attribute "lid" of ufocapture_record inside UFOCapture XML file.',
-        null=True
+        blank=True, null=True
     )
     observer = models.CharField(
         max_length=32,
         help_text='Value of attribute "observer" of ufocapture_record inside UFOCapture XML file.',
-        null=True
+        blank=True, null=True
     )
     sid = models.CharField(
         max_length=16,
         help_text='Value of attribute "sid" of ufocapture_record inside UFOCapture XML file.',
-        null=True
+        blank=True, null=True
     )
     cam = models.CharField(
         max_length=32,
         help_text='Value of attribute "cam" of ufocapture_record inside UFOCapture XML file.',
-        null=True
+        blank=True, null=True
     )
     lens = models.CharField(
         max_length=32,
         help_text='Value of attribute "lens" of ufocapture_record inside UFOCapture XML file.',
-        null=True
+        blank=True, null=True
     )
     cap = models.CharField(
         max_length=32,
         help_text='Value of attribute "cap" of ufocapture_record inside UFOCapture XML file.',
-        null=True
+        blank=True, null=True
     )
     comment = models.CharField(
         max_length=64,
         help_text='Value of attribute "comment" of ufocapture_record inside UFOCapture XML file.',
-        null=True
+        blank=True, null=True
     )
     interlace = models.IntegerField(
         help_text='Value of attribute "interlace" of ufocapture_record inside UFOCapture XML file.',
@@ -185,20 +193,28 @@ class UfoCaptureOutputEntry(models.Model):
         help_text='Value of attribute "dropframe" of ufocapture_record inside UFOCapture XML file.',
         null=True
     )
-    fourcc = models.IntegerField(
+    fourcc = models.CharField(
+        max_length=16,
         help_text='Value of attribute "fourcc" of ufocapture_record inside UFOCapture XML file.',
-        null=True
+        blank=True, null=True
     )
 
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['report', 'clip_filename'], name='unique_pair_report_clip'),
+            models.UniqueConstraint(fields=['station', 'clip_filename'], name='unique_pair_station_clip')
+        ]
 
     def __str__(self):
         model_name = self.__class__.__name__
         field_value_strs = []
 
         for field in ['clip_filename', 'type']:
-            v = getattr(self, field.name)
-            v_str = f'"{v}"' if isinstance(v, str) else v
-            field_value_strs.append(f'{field.name}: {v_str}')
+            v = getattr(self, field)
+            v_str = f'"{v}"' if isinstance(v, str) else v.name
+            field_value_strs.append(f'{field}: {v_str}')
 
         return f'{model_name} ({", ".join(field_value_strs)})'

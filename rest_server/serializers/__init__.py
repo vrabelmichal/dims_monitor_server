@@ -4,3 +4,4 @@ from rest_server.serializers.report import ReportSerializer, ReportNestedSeriali
 
 from rest_server.serializers.disk_usage import DiskUsageSerializer, DiskUsageNestedSerializer
 from rest_server.serializers.cpu_status import CpuStatusSerializer, CpuStatusNestedSerializer
+from rest_server.serializers.ufo_capture_output import UfoCaptureOutputNestedSerializer

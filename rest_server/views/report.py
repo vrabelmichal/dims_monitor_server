@@ -40,7 +40,7 @@ class ComplexReportList(APIView):
         # print(request)
         # user(=station) data could be acquired here
 
-        for k in ['start_utc', 'hash', 'data']:
+        for k in ['start_utc', 'post_utc', 'hash', 'data']:
             if k not in request.data:
                 return Response(data=dict(status=f'Missing attribute {k}'), status=status.HTTP_400_BAD_REQUEST)
         try:
@@ -50,6 +50,7 @@ class ComplexReportList(APIView):
 
         rns_data = dict(
             start_utc=request.data['start_utc'],
+            post_utc=request.data['post_utc'],
             hash=request.data['hash'],
             retrieved_utc=datetime.datetime.utcnow(),
             station=request.user.username, #'dims_0', # TODO
