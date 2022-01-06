@@ -3,29 +3,13 @@ import json
 
 from rest_framework import generics, status
 from rest_framework.authentication import BasicAuthentication, TokenAuthentication
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from rest_server.models import Report
-from rest_server.serializers import ReportSerializer, ReportNestedSerializer
-
-
-class ReportList(generics.ListCreateAPIView):
-    authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    queryset = Report.objects.all()
-    serializer_class = ReportSerializer
-
-
-class ReportDetail(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    queryset = Report.objects.all()
-    serializer_class = ReportSerializer
-    # not really needed
+from rest_server.serializers import ReportNestedSerializer
 
 
 class ComplexReportList(APIView):
@@ -39,7 +23,7 @@ class ComplexReportList(APIView):
     def post(self, request, format=None):
         # print(request)
         # user(=station) data could be acquired here
-
+        pass
         for k in ['start_utc', 'post_utc', 'hash', 'data']:
             if k not in request.data:
                 return Response(data=dict(status=f'Missing attribute {k}'), status=status.HTTP_400_BAD_REQUEST)
@@ -53,15 +37,23 @@ class ComplexReportList(APIView):
             post_utc=request.data['post_utc'],
             hash=request.data['hash'],
             retrieved_utc=datetime.datetime.utcnow(),
-            station=request.user.username, #'dims_0', # TODO
+            station=request.user.username,
             **measurements_dict
         )
 
         rns = ReportNestedSerializer(data=rns_data)
+        # existing hash might cause problems here
 
-        if rns.is_valid():
+        # try:
+
+        if rns.is_valid(raise_exception=True):
             rns.save()
             return Response(data=dict(status='Created'), status=status.HTTP_201_CREATED)
-            # return Response(data=dict(status='Success'), status=status.HTTP_201_CREATED)
+
+        # except ValidationError as e:
+        #     print(e.detail)
+            # print(e.detail['hash'])
+            # print(e.detail['hash'][0].code)
+            # pass
 
         return Response(rns.errors, status=status.HTTP_400_BAD_REQUEST)

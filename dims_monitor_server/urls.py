@@ -38,8 +38,8 @@ urlpatterns = [
 
     path('api/complex-reports/', rest_server.views.ComplexReportList.as_view()),
 
-    path('api/reports/', rest_server.views.ReportList.as_view()),
-    path('api/reports/<int:pk>/', rest_server.views.ReportDetail.as_view()),
-    path('api/disk-usages/', rest_server.views.DiskUsageList.as_view()),
+    # path('api/reports/', rest_server.views.ReportList.as_view()),
+    # path('api/reports/<int:pk>/', rest_server.views.ReportDetail.as_view()),
+    # path('api/disk-usages/', rest_server.views.DiskUsageList.as_view()),
     path('api/ufo-capture-output/latest', rest_server.views.latest_ufo_capture_file),
 ]

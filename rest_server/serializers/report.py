@@ -1,3 +1,6 @@
+import logging
+
+from django.db import transaction, IntegrityError
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ListSerializer
@@ -31,9 +34,15 @@ class ReportNestedSerializer(serializers.ModelSerializer):
     ohm = OhmSensorMeasurementNestedSerializer(many=True, read_only=False, required=False)
     ufo_capture_output = UfoCaptureOutputNestedSerializer(many=True, read_only=False, required=False)
 
+    _logger = None
+
     class Meta:
         model = Report
         fields = ['start_utc', 'post_utc', 'retrieved_utc', 'hash', 'station', *ACQUIRED_MODULES]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._logger = logging.getLogger('rest_server.ReportNestedSerializer')
 
     def create(self, validated_data):
 
@@ -43,39 +52,61 @@ class ReportNestedSerializer(serializers.ModelSerializer):
             if module_name in validated_data:
                 module_data_dict[module_name] = validated_data.pop(module_name)
 
-        report = Report.objects.create(**validated_data)
+        # TODO create with non-existing station should be tested !
+        # XXXXXXXXXXXXXXXXXXX get_or_create should be tested when no id is provided
+        # XXXXXXXXXXXXXXXXXXX report, report_was_created = Report.objects.get_or_create(**validated_data)
 
-        for module_name, module_data in module_data_dict.items():
-            if not isinstance(module_data, (list, tuple)):
-                module_data = [module_data]
+        integrity_errors_dict = dict()
 
-            module_serializer = self.fields.fields.get(module_name)
-            if module_serializer is None:
-                # This should never happen
-                raise RuntimeError(f'Invalid module name: "{module_name}"')
+        with transaction.atomic():
 
-            if isinstance(module_serializer, ListSerializer):
-                module_serializer = module_serializer.child
+            report = Report.objects.create(**validated_data)
 
-            module_serializer_cls = module_serializer.__class__
+            for module_name, module_data in module_data_dict.items():
+                if not isinstance(module_data, (list, tuple)):
+                    module_data = [module_data]
 
-            for module_data_entry in module_data:
-                # This might not be an ideal approach because the validation might be reselecting data from the database
-                # Probably a different kind of serializer might be better or it should be implemented
-                #   in another more efficient way
+                module_serializer = self.fields.fields.get(module_name)
+                if module_serializer is None:
+                    # This should never happen
+                    raise RuntimeError(f'Invalid module name: "{module_name}"')
 
-                module_data_entry['report'] = report.id
-                module_data_entry['station'] = report.station.id
-                # ds = MODULE_SERIALIZER_MAPPING[module_name](data=module_data_entry)
-                ds = module_serializer_cls(data=module_data_entry)
-                if ds.is_valid(raise_exception=True):
-                    # TODO consider raising exception
-                    ds.save()
+                if isinstance(module_serializer, ListSerializer):
+                    module_serializer = module_serializer.child
+
+                module_serializer_cls = module_serializer.__class__
+
+                for module_data_entry in module_data:
+                    # This might not be an ideal approach because the validation might be reselecting data
+                    #   from the database
+                    # Probably a different kind of serializer might be better or it should be implemented
+                    #   in another more efficient way
+
+                    module_data_entry['report'] = report.id
+                    module_data_entry['station'] = report.station.id
+
+                    ds = module_serializer_cls(data=module_data_entry)
+
+                    if ds.is_valid(raise_exception=True):
+                        # for now, integrity errors are ignored
+                        try:
+                            with transaction.atomic():
+                                ds.save()
+                        except IntegrityError as e:
+                            if module_name not in integrity_errors_dict:
+                                integrity_errors_dict[module_name] = []
+                            entry_hash = hash(frozenset(sorted(module_data_entry.items())))
+                            integrity_errors_dict[module_name].append(entry_hash)
+                            self._logger.warning(
+                                f'Integrity error in report #{report.id} is being ignored '
+                                f'(module: {module_name}, entry hash: {integrity_errors_dict[module_name]})'
+                            )
+
+            if len(integrity_errors_dict) == 0:
+                report.fully_processed = True  # now used to indicate processing errors
+            else:
+                report.integrity_errors = integrity_errors_dict
+
+            report.save()  # either fully processed or integrity errors
 
         return report
-
-
-class ReportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Report
-        fields = ['start_utc', 'hash', 'station']
