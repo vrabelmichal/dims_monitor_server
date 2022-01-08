@@ -1,12 +1,28 @@
+import os.path
+
+from django.apps import apps
 from django.db import models
 
 from rest_server.models.station import Station
 from rest_server.models.report import Report
-from rest_server.utils import model2str
+
+
+def preview_image_dir_path(instance, filename):
+    # If you are using the default FileSystemStorage,
+    # the string value will be appended to your MEDIA_ROOT path
+    # to form the location on the local filesystem where uploaded files will be stored.
+    return os.path.join(
+        apps.get_app_config('rest_server').REPORT_BASE_DATA_DIR,
+        str(instance.station.name),
+        '{:%Y%m%d-%H%M%S}--{}'.format(
+            instance.report.start_utc,
+            instance.report.hash
+        ),
+        filename
+    )
 
 
 class UfoCaptureOutputEntry(models.Model):
-
     snapshot_filename = models.CharField(
         max_length=260,
         help_text='Filename of a file on the remote station. '
@@ -29,10 +45,29 @@ class UfoCaptureOutputEntry(models.Model):
     )
 
     # ???
-    internal_thumbnail_pathname = models.CharField(
-        max_length=260,
-        help_text='Pathname of the thumbnail stored on the server.',
-        blank=True, null=True
+    # internal_thumbnail_pathname = models.CharField(
+    #     max_length=260,
+    #     help_text='Pathname of the thumbnail stored on the server.',
+    #     blank=True, null=True
+    # )
+
+    det_level_preview = models.ImageField(
+        upload_to=preview_image_dir_path,
+        help_text='Detected pixels the brightness of which was changed more than "Detect Lev"',
+        null=True, blank=True
+    )
+    long_term_avg_preview = models.ImageField(
+        upload_to=preview_image_dir_path,
+        help_text="Long term averaged brightness of the pixel.",
+        null=True, blank=True
+    )
+    peak_hold_preview = models.ImageField(
+        upload_to=preview_image_dir_path,
+        help_text="Automatic composite still image which contains the peak brightness of each pixel "
+                  "during the detection will be saved as a still image. "
+                  "Peak hold is useful in nighttime luminous event observation. "
+                  "Exclusive with SnapShot setting.",
+        null=True, blank=True
     )
 
     map_filename = models.CharField(

@@ -42,4 +42,4 @@ urlpatterns = [
     # path('api/reports/<int:pk>/', rest_server.views.ReportDetail.as_view()),
     # path('api/disk-usages/', rest_server.views.DiskUsageList.as_view()),
     path('api/ufo-capture-output/latest', rest_server.views.latest_ufo_capture_file),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
