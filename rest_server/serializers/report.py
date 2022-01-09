@@ -67,10 +67,6 @@ class ReportNestedSerializer(serializers.ModelSerializer):
         else:
             attachments = dict()
 
-        # TODO create with non-existing station should be tested !
-        # XXXXXXXXXXXXXXXXXXX get_or_create should be tested when no id is provided
-        # XXXXXXXXXXXXXXXXXXX report, report_was_created = Report.objects.get_or_create(**validated_data)
-
         integrity_errors_dict = dict()
 
         with transaction.atomic():

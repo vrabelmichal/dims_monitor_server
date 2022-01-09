@@ -1,0 +1,210 @@
+{% load misc %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report: {{ report.id }}@{{ report.station.name }} / {{ report.start_utc }}</title>
+    <style>
+        .event-img {
+            max-height: 256px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Report: {{ report.id }}@{{ report.station.name }} / {{ report.start_utc }}</h1>
+    <dl>
+        <dt>id</dt>
+        <dd>{{ report.id }}</dd>
+
+        <dt>start_utc</dt>
+        <dd>{{ report.start_utc }}</dd>
+
+        <dt>post_utc</dt>
+        <dd>{{ report.post_utc }}</dd>
+
+        <dt>retrieved_utc</dt>
+        <dd>{{ report.retrieved_utc }}</dd>
+
+        <dt>station</dt>
+        <dd>{{ report.station }}</dd>
+
+        <dt>hash</dt>
+        <dd>{{ report.hash }}</dd>
+
+        <dt>fully_processed</dt>
+        <dd>{{ report.fully_processed }}</dd>
+
+        <dt>integrity_errors</dt>
+        <dd>{{ report.integrity_errors }}</dd>
+
+        <dt>cpu_status.all.count</dt>
+        <dd>{{ cpu_status.all.count }}</dd>
+        <dt>disk_usage.all.count</dt>
+        <dd>{{ disk_usage.all.count }}</dd>
+        <dt>memory_usage.all.count</dt>
+        <dd>{{ memory_usage.all.count }}</dd>
+        <dt>ohm.all.count</dt>
+        <dd>{{ ohm.all.count }}</dd>
+        <dt>ufo_caputre_output.all.count</dt>
+        <dd>{{ ufo_caputre_output.all.count }}</dd>
+
+    </dl>
+
+    <hr>
+
+    <section id="ufo_caputre_output_data">
+    <h2>ufo_caputre_output_data</h2>
+
+    {% if ufo_caputre_output.all.count > 0 %}
+        {% for ufo_caputre_output_entry in ufo_caputre_output.all %}
+            <h3>{{ ufo_caputre_output_entry.clip_filename }}</h3>
+
+
+            <figure>
+            <figcaption>long_term_avg_preview</figcaption>
+            {% if ufo_caputre_output_entry.long_term_avg_preview %}
+                <img src="{{ ufo_caputre_output_entry.long_term_avg_preview.url }}" class="event-img" alt="long_term_avg_preview" />
+            {% else %}
+                <p>No image</p>
+            {% endif %}
+            </figure>
+
+            <figure>
+            <figcaption>peak_hold_preview</figcaption>
+            {% if ufo_caputre_output_entry.peak_hold_preview %}
+                <img src="{{ ufo_caputre_output_entry.peak_hold_preview.url }}" class="event-img" alt="peak_hold_preview" />
+            {% else %}
+                <p>No image</p>
+            {% endif %}
+            </figure>
+
+            <figure>
+            <figcaption>det_level_preview</figcaption>
+            {% if ufo_caputre_output_entry.det_level_preview %}
+                <img src="{{ ufo_caputre_output_entry.det_level_preview.url }}" class="event-img" alt="det_level_preview" />
+            {% else %}
+                <p>No image</p>
+            {% endif %}
+            </figure>
+
+            <dl>
+            <dt>type</dt> <dd>{{ ufo_caputre_output_entry.type }}</dd>
+            <dt>filename_datetime</dt> <dd>{{ ufo_caputre_output_entry.filename_datetime }}</dd>
+            <dt>trig</dt> <dd>{{ ufo_caputre_output_entry.trig }}</dd>
+            <dt>frames</dt> <dd>{{ ufo_caputre_output_entry.frames }}</dd>
+    {#        <dt>u2</dt> <dd>{{ ufo_caputre_output_entry.u2 }}</dd>#}
+    {#        <dt>cx</dt> <dd>{{ ufo_caputre_output_entry.cx }}</dd>#}
+    {#        <dt>cy</dt> <dd>{{ ufo_caputre_output_entry.cy }}</dd>#}
+    {#        <dt>fps</dt> <dd>{{ ufo_caputre_output_entry.fps }}</dd>#}
+    {#        <dt>head</dt> <dd>{{ ufo_caputre_output_entry.head }}</dd>#}
+    {#        <dt>tail</dt> <dd>{{ ufo_caputre_output_entry.tail }}</dd>#}
+            <dt>diff</dt> <dd>{{ ufo_caputre_output_entry.diff }}</dd>
+            <dt>sipos</dt> <dd>{{ ufo_caputre_output_entry.sipos }}</dd>
+            <dt>sisize</dt> <dd>{{ ufo_caputre_output_entry.sisize }}</dd>
+            <dt>dlev</dt> <dd>{{ ufo_caputre_output_entry.dlev }}</dd>
+            <dt>dsize</dt> <dd>{{ ufo_caputre_output_entry.dsize }}</dd>
+    {#        <dt>dropframe</dt> <dd>{{ ufo_caputre_output_entry.dropframe }}</dd>#}
+            </dl>
+
+    {#        {% for field in ufo_caputre_output_entry %}#}
+    {#            {{ field }}#}
+    {#        {% endfor %}#}
+        {% endfor %}
+    {% else %}
+    <p>No records</p>
+    {% endif %}
+    </section>
+
+{#    {% for instance in ufo_caputre_output_data %}#}
+{#        <h3>{{ instance.fields|get_item:'clip_filename' }}</h3>#}
+{#        <img src="{%  %}">{{ instance.fields|get_item:'clip_filename' }}</img>#}
+{#        <dl>#}
+{#        {% for field, value in instance.fields.items %}#}
+{#            <dt>{{ field }}</dt> <dd>{{ value }}</dd>#}
+{#        {% endfor %}#}
+{#        </dl>#}
+{#    {% endfor %}#}
+
+
+    <hr>
+
+    <section id="cpu_status">
+    <h2>cpu_status</h2>
+
+    {% if cpu_status.all.count > 0 %}
+    <dl>
+    <dt>cpu_freq_mean</dt> <dd>{{ cpu_status.first.cpu_freq_mean }}</dd>
+    <dt>cpu_freq_min</dt> <dd>{{ cpu_status.first.cpu_freq_min }}</dd>
+    <dt>cpu_freq_max</dt> <dd>{{ cpu_status.first.cpu_freq_max }}</dd>
+    <dt>load_avg_percent_1min</dt> <dd>{{ cpu_status.first.load_avg_percent_1min }}</dd>
+    <dt>load_avg_percent_5min</dt> <dd>{{ cpu_status.first.load_avg_percent_5min }}</dd>
+    <dt>load_avg_percent_15min</dt> <dd>{{ cpu_status.first.load_avg_percent_15min }}</dd>
+    <dt>cpu_percent_min</dt> <dd>{{ cpu_status.first.cpu_percent_min }}</dd>
+    <dt>cpu_percent_max</dt> <dd>{{ cpu_status.first.cpu_percent_max }}</dd>
+    <dt>cpu_percent_mean</dt> <dd>{{ cpu_status.first.cpu_percent_mean }}</dd>
+    </dl>
+    {% else %}
+    <p>No records</p>
+    {% endif %}
+    </section>
+
+    <section>
+    <h2>disk_usage</h2>
+
+    {% if disk_usage.all.count > 0 %}
+        {% for du_data in disk_usage.all %}
+            <section>
+            <h3>{{ du_data.disk_partition.device }} ({{ du_data.disk_partition.mountpoint }}, {{ du_data.disk_partition.fstype }}, {{ du_data.disk_partition.opts }})</h3>
+            <dl>
+            <dt>total</dt> <dd>{{ du_data.total }}</dd>
+            <dt>used</dt> <dd>{{ du_data.used }}</dd>
+            <dt>free</dt> <dd>{{ du_data.free }}</dd>
+            </dl>
+            </section>
+        {% endfor %}
+    {% else %}
+    <p>No records</p>
+    {% endif %}
+    </section>
+
+    <section>
+    <h2>memory_usage</h2>
+
+    {% if memory_usage.all.count > 0 %}
+    <dl>
+    <dt>virtual_total</dt> <dd>{{ memory_usage.first.virtual_total }}</dd>
+    <dt>virtual_available</dt> <dd>{{ memory_usage.first.virtual_available }}</dd>
+    <dt>virtual_used</dt> <dd>{{ memory_usage.first.virtual_used }}</dd>
+    <dt>virtual_free</dt> <dd>{{ memory_usage.first.virtual_free }}</dd>
+    <dt>swap_total</dt> <dd>{{ memory_usage.first.swap_total }}</dd>
+    <dt>swap_used</dt> <dd>{{ memory_usage.first.swap_used }}</dd>
+    <dt>swap_free</dt> <dd>{{ memory_usage.first.swap_free }}</dd>
+    <dt>swap_percent</dt> <dd>{{ memory_usage.first.swap_percent }}</dd>
+    </dl>
+    {% else %}
+    <p>No records</p>
+    {% endif %}
+    </section>
+
+    <section>
+    <h2>ohm</h2>
+
+    {% if ohm.all.count > 0 %}
+        {% for sensor_measurement in ohm.all %}
+            <section>
+{#            <h3>{{ du_data.disk_partition.device }} ({{ du_data.disk_partition.mountpoint }}, {{ du_data.disk_partition.fstype }}, {{ du_data.disk_partition.opts }})</h3>#}
+            <dl>
+            <dt>sensor</dt> <dd>{{ sensor_measurement.sensor.name }}</dd>
+            <dt>value</dt> <dd>{{ sensor_measurement.value }}</dd>
+            <dt>value_max</dt> <dd>{{ sensor_measurement.value_max }}</dd>
+            <dt>value_min</dt> <dd>{{ sensor_measurement.value_min }}</dd>
+            </dl>
+            </section>
+        {% endfor %}
+    {% else %}
+    <p>No records</p>
+    {% endif %}
+    </section>
+
+</body>
+</html>

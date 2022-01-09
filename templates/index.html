@@ -1,3 +1,4 @@
+{% load misc %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,41 @@
 </head>
 <body>
 <h1>DIMS REST server</h1>
-<img src="{% static '/server-12260-128.png' %}" alt="My image"/>
+{#<img src="{% static '/server-12260-128.png' %}" alt="My image"/>#}
+
+{% for station in stations %}
+    <h2>Station: {{ station.name }}</h2>
+    <table>
+    <thead>
+    <tr>
+        <td>id</td>
+        <td>start_utc</td>
+        <td>post_utc</td>
+        <td>retrieved_utc</td>
+        <td>station</td>
+        <td>hash</td>
+        <td>fully_processed</td>
+        <td>no. ufo</td>
+        <td>details</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for report in latest_reports_per_station|get_item:station.name %}
+    <tr>
+        <td>{{ report.id }}</td>
+        <td>{{ report.start_utc }}</td>
+        <td>{{ report.post_utc }}</td>
+        <td>{{ report.retrieved_utc }}</td>
+        <td>{{ report.station }}</td>
+        <td>{{ report.hash }}</td>
+        <td>{{ report.fully_processed }}</td>
+        <td>{{ count_ufo_outputs_per_station|get_item:station.name|get_item:report.id }}</td>
+        <td><a href="{% url 'report_detail' report.id %}">Details</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{% endfor %}
+
 </body>
 </html>

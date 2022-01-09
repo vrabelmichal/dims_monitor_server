@@ -15,20 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path
-from django.views.generic import RedirectView
 
-import rest_server.views.index
-
-import rest_server.views.report
-
-import rest_server.views.disk_usage
 from dims_monitor_server import settings
-from rest_server import views
 from django.conf.urls.static import static
 from django.views.static import serve
 
+import rest_server.views.web
+import rest_server.views.rest
+
 urlpatterns = [
-    path('', rest_server.views.index, name='index'),
+    path('', rest_server.views.web.index, name='index'),
+    path('report/<int:report_id>', rest_server.views.web.report_detail, name='report_detail'),
+
     re_path(r'^favicon\.ico$', serve, kwargs=dict(
         document_root=settings.BASE_DIR / 'rest_server' / 'static',
         path='favicon.ico'
@@ -36,10 +34,10 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
 
-    path('api/complex-reports/', rest_server.views.ComplexReportList.as_view()),
+    path('api/complex-reports/', rest_server.views.rest.ComplexReportList.as_view()),
 
-    # path('api/reports/', rest_server.views.ReportList.as_view()),
-    # path('api/reports/<int:pk>/', rest_server.views.ReportDetail.as_view()),
-    # path('api/disk-usages/', rest_server.views.DiskUsageList.as_view()),
-    path('api/ufo-capture-output/latest', rest_server.views.latest_ufo_capture_file),
+    # path('api/reports/', rest_server.views.rest.ReportList.as_view()),
+    # path('api/reports/<int:pk>/', rest_server.views.rest.ReportDetail.as_view()),
+    # path('api/disk-usages/', rest_server.views.rest.DiskUsageList.as_view()),
+    path('api/ufo-capture-output/latest', rest_server.views.rest.latest_ufo_capture_file),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
