@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 
 from dims_monitor_server import settings
 from django.conf.urls.static import static
@@ -26,6 +26,7 @@ import rest_server.views.rest
 urlpatterns = [
     path('', rest_server.views.web.index, name='index'),
     path('report/<int:report_id>', rest_server.views.web.report_detail, name='report_detail'),
+    path('accounts/', include('django.contrib.auth.urls')),
 
     re_path(r'^favicon\.ico$', serve, kwargs=dict(
         document_root=settings.BASE_DIR / 'rest_server' / 'static',
@@ -40,4 +41,6 @@ urlpatterns = [
     # path('api/reports/<int:pk>/', rest_server.views.rest.ReportDetail.as_view()),
     # path('api/disk-usages/', rest_server.views.rest.DiskUsageList.as_view()),
     path('api/ufo-capture-output/latest', rest_server.views.rest.latest_ufo_capture_file),
+
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

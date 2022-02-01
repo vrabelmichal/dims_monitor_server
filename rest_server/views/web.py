@@ -5,7 +5,9 @@ from django.core import serializers
 from rest_server.models import Station, Report, DiskUsage, CpuStatus, MemoryUsage, OhmSensorMeasurement, \
     UfoCaptureOutputEntry
 
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def index(request):
 
     stations = Station.objects.all()
@@ -31,6 +33,7 @@ def index(request):
     ))  # rendering the template in HttpResponse
 
 
+@login_required
 def report_detail(request, report_id):
     report = Report.objects.filter(id=report_id).first()
 
