@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from rest_server.models import Report, UfoCaptureOutputEntry, Station
+from rest_server.models.env_log_measurement import EnvironmentLogUpload
 
 
 class ArduinoLogUploadSerializer(serializers.ModelSerializer):
@@ -19,9 +20,15 @@ class ArduinoLogUploadSerializer(serializers.ModelSerializer):
         queryset=Station.objects.all()
     )
 
+    # TODO !
+
     class Meta:
-        model = UfoCaptureOutputEntry
-        fields = '__all__'
+        model = EnvironmentLogUpload
+        fields = [
+            'captured_hour', 'is_finished', #'logfile',
+            'report', 'station'
+        ]
+        #'__all__'
 
     def create(self, validated_data):
 

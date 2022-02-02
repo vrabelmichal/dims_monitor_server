@@ -4,7 +4,7 @@ from rest_server.models import Report, Station
 from rest_server.utils import model2str
 
 
-class ArduinoLogUpload(models.Model):
+class EnvironmentLogUpload(models.Model):
     captured_hour = models.DateTimeField(
         help_text='Datetime derived from the log file name (EnvData file).',
         null=True
@@ -31,7 +31,7 @@ class ArduinoLogUpload(models.Model):
         return model2str(self, self.__class__.__name__, ['captured_hour', 'station'])
 
 
-class ArduinoEnvironmentMeasurement(models.Model):
+class EnvironmentLogMeasurement(models.Model):
     measurement_datetime = models.DateTimeField(
         help_text='Datetime of the measurement.'
     )
@@ -69,4 +69,4 @@ class ArduinoEnvironmentMeasurement(models.Model):
         help_text='Value of column "fan2_pwm" inside the Arduino data log file (EnvData).',
     )
 
-    log_upload = models.ForeignKey(ArduinoLogUpload, on_delete=models.CASCADE)
+    log_upload = models.ForeignKey(EnvironmentLogUpload, on_delete=models.CASCADE)
