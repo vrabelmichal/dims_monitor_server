@@ -9,3 +9,4 @@ from rest_server.models.ohm_measurement import \
     OhmHardwareInformation, OhmSensorParameter, OhmSensorInformation, OhmSensorMeasurement
 from rest_server.models.ufo_capture_output import UfoCaptureOutputEntry
 from rest_server.models.station import Station
+from rest_server.models.env_log_measurement import EnvironmentLogUpload, EnvironmentLogMeasurement

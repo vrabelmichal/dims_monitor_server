@@ -7,14 +7,14 @@ from rest_server.utils import model2str
 class EnvironmentLogUpload(models.Model):
     captured_hour = models.DateTimeField(
         help_text='Datetime derived from the log file name (EnvData file).',
-        null=True
     )
     log_filename = models.CharField(
         max_length=260,
         help_text='Filename of a file on the remote station. ',
+        null=True
     )
     # this might not be necessary !!
-    is_finished = models.BooleanField(
+    is_historical = models.BooleanField(
         help_text='Indicates if file is being presently filled-in on the station'
     )
 
@@ -28,7 +28,7 @@ class EnvironmentLogUpload(models.Model):
         ]
 
     def __str__(self):
-        return model2str(self, self.__class__.__name__, ['captured_hour', 'station'])
+        return model2str(self, None, ['captured_hour', 'station'])
 
 
 class EnvironmentLogMeasurement(models.Model):
@@ -70,3 +70,9 @@ class EnvironmentLogMeasurement(models.Model):
     )
 
     log_upload = models.ForeignKey(EnvironmentLogUpload, on_delete=models.CASCADE)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['measurement_datetime', 'log_upload'], name='unique_pair_datetime_station'),
+        ]

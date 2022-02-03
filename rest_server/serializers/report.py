@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ListSerializer
 
 from rest_server.models import Report, Station
+from rest_server.serializers.env_log_measurement import EnvironmentLogUploadSerializer
 from rest_server.serializers.ufo_capture_output import UfoCaptureOutputNestedSerializer
 from rest_server.serializers.cpu_status import CpuStatusNestedSerializer
 from rest_server.serializers.disk_usage import DiskUsageNestedSerializer
@@ -18,7 +19,7 @@ from rest_server.serializers.ohm_measurement import OhmSensorMeasurementNestedSe
 # )
 
 ACQUIRED_MODULES = ['disk_usage', 'memory_usage',
-                    'cpu_status', 'ohm', 'ufo_capture_output']
+                    'cpu_status', 'ohm', 'ufo_capture_output', 'environment_log']
 
 
 class ReportNestedSerializer(serializers.ModelSerializer):
@@ -33,6 +34,7 @@ class ReportNestedSerializer(serializers.ModelSerializer):
     cpu_status = CpuStatusNestedSerializer(many=True, read_only=False, required=False)
     ohm = OhmSensorMeasurementNestedSerializer(many=True, read_only=False, required=False)
     ufo_capture_output = UfoCaptureOutputNestedSerializer(many=True, read_only=False, required=False)
+    environment_log = EnvironmentLogUploadSerializer(many=True, read_only=False, required=False)
 
     attachments = serializers.DictField(    # module
         child=serializers.DictField(        # entry
