@@ -1,6 +1,7 @@
 from django.db import models
 
-from rest_server.models import Report, Station
+from rest_server.models.report import Report
+from rest_server.models.station import Station
 from rest_server.utils import model2str
 
 
@@ -24,7 +25,6 @@ class EnvironmentLogUpload(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['report', 'captured_hour'], name='unique_pair_report_captured_hour'),
-            models.UniqueConstraint(fields=['station', 'captured_hour'], name='unique_pair_station_captured_hour')
         ]
 
     def __str__(self):
@@ -74,5 +74,6 @@ class EnvironmentLogMeasurement(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['measurement_datetime', 'log_upload'], name='unique_pair_datetime_station'),
+            models.UniqueConstraint(fields=['measurement_datetime', 'log_upload'], name='unique_pair_datetime_log_upload'),
+            models.UniqueConstraint(fields=['measurement_datetime', 'station'], name='unique_pair_datetime_station'),
         ]
