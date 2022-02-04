@@ -41,7 +41,7 @@ urlpatterns = [
     # path('api/reports/<int:pk>/', rest_server.views.rest.ReportDetail.as_view()),
     # path('api/disk-usages/', rest_server.views.rest.DiskUsageList.as_view()),
     path('api/ufo-capture-output/latest', rest_server.views.rest.latest_ufo_capture_file),
-    path('api/environment-log/latest', rest_server.views.rest.latest_env_log_measurement),
+    path('api/environment-log-upload/latest', rest_server.views.rest.latest_env_log_upload),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
