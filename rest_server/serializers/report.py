@@ -23,7 +23,7 @@ ACQUIRED_MODULES = ['disk_usage', 'memory_usage',
 
 
 class ReportNestedSerializer(serializers.ModelSerializer):
-
+    # TODO HANDLE IF STATION IS NOT IN THE TABLE
     station = serializers.SlugRelatedField(
         many=False, read_only=False, required=True,
         slug_field='name', queryset=Station.objects.all()
