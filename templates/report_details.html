@@ -1,210 +1,402 @@
+{% extends "layouts/base.html" %}
 {% load misc %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Report: {{ report.id }}@{{ report.station.name }} / {{ report.start_utc }}</title>
+
+
+
+{% block title %} Report: {{ report.id }}@{{ report.station.name }} / {{ report.start_utc }}{% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
     <style>
         .event-img {
             max-height: 256px;
         }
     </style>
-</head>
-<body>
-    <h1>Report: {{ report.id }}@{{ report.station.name }} / {{ report.start_utc }}</h1>
-    <dl>
-        <dt>id</dt>
-        <dd>{{ report.id }}</dd>
+{% endblock stylesheets %}
 
-        <dt>start_utc</dt>
-        <dd>{{ report.start_utc }}</dd>
+{% block content %}
 
-        <dt>post_utc</dt>
-        <dd>{{ report.post_utc }}</dd>
+    <h1>Report: {{ report.id }}@{{ report.station.name }} / {{ report.start_utc|date:'Y-m-d H:i:s' }}</h1>
+    <dl class="row">
+        <dt class="col-sm-3">id</dt>
+        <dd class="col-sm-9">{{ report.id }}</dd>
 
-        <dt>retrieved_utc</dt>
-        <dd>{{ report.retrieved_utc }}</dd>
+        <dt class="col-sm-3">start_utc</dt>
+        <dd class="col-sm-9">{{ report.start_utc|date:'Y-m-d H:i:s' }}</dd>
 
-        <dt>station</dt>
-        <dd>{{ report.station }}</dd>
+        <dt class="col-sm-3">post_utc</dt>
+        <dd class="col-sm-9">{{ report.post_utc|date:'Y-m-d H:i:s' }}</dd>
 
-        <dt>hash</dt>
-        <dd>{{ report.hash }}</dd>
+        <dt class="col-sm-3">retrieved_utc</dt>
+        <dd class="col-sm-9">{{ report.retrieved_utc|date:'Y-m-d H:i:s' }}</dd>
 
-        <dt>fully_processed</dt>
-        <dd>{{ report.fully_processed }}</dd>
+        <dt class="col-sm-3">station</dt>
+        <dd class="col-sm-9">{{ report.station }}</dd>
 
-        <dt>integrity_errors</dt>
-        <dd>{{ report.integrity_errors }}</dd>
+        <dt class="col-sm-3">hash</dt>
+        <dd class="col-sm-9">{{ report.hash }}</dd>
 
-        <dt>cpu_status.all.count</dt>
-        <dd>{{ cpu_status.all.count }}</dd>
-        <dt>disk_usage.all.count</dt>
-        <dd>{{ disk_usage.all.count }}</dd>
-        <dt>memory_usage.all.count</dt>
-        <dd>{{ memory_usage.all.count }}</dd>
-        <dt>ohm.all.count</dt>
-        <dd>{{ ohm.all.count }}</dd>
-        <dt>ufo_caputre_output.all.count</dt>
-        <dd>{{ ufo_caputre_output.all.count }}</dd>
+        <dt class="col-sm-3">fully_processed</dt>
+        <dd class="col-sm-9">{{ report.fully_processed }}</dd>
+
+        <dt class="col-sm-3">integrity_errors</dt>
+        <dd class="col-sm-9">{{ report.integrity_errors }}</dd>
+
+        <dt class="col-sm-3">cpu_status.all.count</dt>
+        <dd class="col-sm-9">{{ cpu_status.all.count }}</dd>
+        <dt class="col-sm-3">disk_usage.all.count</dt>
+        <dd class="col-sm-9">{{ disk_usage.all.count }}</dd>
+        <dt class="col-sm-3">memory_usage.all.count</dt>
+        <dd class="col-sm-9">{{ memory_usage.all.count }}</dd>
+        <dt class="col-sm-3">ohm.all.count</dt>
+        <dd class="col-sm-9">{{ ohm.all.count }}</dd>
+        <dt class="col-sm-3">ufo_caputre_output.all.count</dt>
+        <dd class="col-sm-9">{{ ufo_caputre_output.all.count }}</dd>
+        <dt class="col-sm-3">environment_log.all.count</dt>
+        <dd class="col-sm-9">{{ environment_log.all.count }}</dd>
 
     </dl>
 
     <hr>
 
-    <section id="ufo_caputre_output_data">
-    <h2>ufo_caputre_output_data</h2>
+    <nav id="report-navigation" class="navbar sticky-top navbar-dark bg-dark">
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a class="nav-link" href="#ufo_caputre_output_data">ufo_caputre_output_data</a></li>
+            <li class="nav-item"><a class="nav-link" href="#environment_log">environment_log</a></li>
+            <li class="nav-item"><a class="nav-link" href="#cpu_status">cpu_status</a></li>
+            <li class="nav-item"><a class="nav-link" href="#disk_usage">disk_usage</a></li>
+            <li class="nav-item"><a class="nav-link" href="#memory_usage">memory_usage</a></li>
+            <li class="nav-item"><a class="nav-link" href="#ohm">ohm (Open Hardware Monitor)</a></li>
+        </ul>
+    </nav>
 
-    {% if ufo_caputre_output.all.count > 0 %}
-        {% for ufo_caputre_output_entry in ufo_caputre_output.all %}
-            <h3>{{ ufo_caputre_output_entry.clip_filename }}</h3>
+    <hr>
 
+    <div data-spy="scroll" data-target="#report-navigation">
+        <section id="ufo_caputre_output_data">
+        <h2>ufo_caputre_output_data</h2>
 
-            <figure>
-            <figcaption>long_term_avg_preview</figcaption>
-            {% if ufo_caputre_output_entry.long_term_avg_preview %}
-                <img src="{{ ufo_caputre_output_entry.long_term_avg_preview.url }}" class="event-img" alt="long_term_avg_preview" />
-            {% else %}
-                <p>No image</p>
-            {% endif %}
-            </figure>
+        {% if ufo_caputre_output.all.count > 0 %}
+            {% for ufo_caputre_output_entry in ufo_caputre_output.all %}
+            <div class="card border-light shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">{{ ufo_caputre_output_entry.clip_filename }}</h3>
 
-            <figure>
-            <figcaption>peak_hold_preview</figcaption>
-            {% if ufo_caputre_output_entry.peak_hold_preview %}
-                <img src="{{ ufo_caputre_output_entry.peak_hold_preview.url }}" class="event-img" alt="peak_hold_preview" />
-            {% else %}
-                <p>No image</p>
-            {% endif %}
-            </figure>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="card border-light shadow-sm mb-4">
+                              <div class="card-body">
+                                <figure class="figure">
+                                {% if ufo_caputre_output_entry.long_term_avg_preview %}
+                                    <img src="{{ ufo_caputre_output_entry.long_term_avg_preview.url }}" class="event-img figure-img img-fluid" alt="long_term_avg_preview" />
+                                {% else %}
+                                    <p>No image</p>
+                                {% endif %}
+                                <figcaption class="figure-caption">long_term_avg_preview</figcaption>
+                                </figure>
+                              </div>
+                            </div>
+                        </div>
 
-            <figure>
-            <figcaption>det_level_preview</figcaption>
-            {% if ufo_caputre_output_entry.det_level_preview %}
-                <img src="{{ ufo_caputre_output_entry.det_level_preview.url }}" class="event-img" alt="det_level_preview" />
-            {% else %}
-                <p>No image</p>
-            {% endif %}
-            </figure>
+                        <div class="col-sm-4">
+                            <div class="card border-light shadow-sm mb-4">
+                              <div class="card-body">
+                                <figure class="figure">
+                                {% if ufo_caputre_output_entry.peak_hold_preview %}
+                                    <img src="{{ ufo_caputre_output_entry.peak_hold_preview.url }}" class="event-img figure-img img-fluid" alt="peak_hold_preview" />
+                                {% else %}
+                                    <p>No image</p>
+                                {% endif %}
+                                <figcaption class="figure-caption">peak_hold_preview</figcaption>
+                                </figure>
+                              </div>
+                            </div>
+                        </div>
 
-            <dl>
-            <dt>type</dt> <dd>{{ ufo_caputre_output_entry.type }}</dd>
-            <dt>filename_datetime</dt> <dd>{{ ufo_caputre_output_entry.filename_datetime }}</dd>
-            <dt>trig</dt> <dd>{{ ufo_caputre_output_entry.trig }}</dd>
-            <dt>frames</dt> <dd>{{ ufo_caputre_output_entry.frames }}</dd>
-    {#        <dt>u2</dt> <dd>{{ ufo_caputre_output_entry.u2 }}</dd>#}
-    {#        <dt>cx</dt> <dd>{{ ufo_caputre_output_entry.cx }}</dd>#}
-    {#        <dt>cy</dt> <dd>{{ ufo_caputre_output_entry.cy }}</dd>#}
-    {#        <dt>fps</dt> <dd>{{ ufo_caputre_output_entry.fps }}</dd>#}
-    {#        <dt>head</dt> <dd>{{ ufo_caputre_output_entry.head }}</dd>#}
-    {#        <dt>tail</dt> <dd>{{ ufo_caputre_output_entry.tail }}</dd>#}
-            <dt>diff</dt> <dd>{{ ufo_caputre_output_entry.diff }}</dd>
-            <dt>sipos</dt> <dd>{{ ufo_caputre_output_entry.sipos }}</dd>
-            <dt>sisize</dt> <dd>{{ ufo_caputre_output_entry.sisize }}</dd>
-            <dt>dlev</dt> <dd>{{ ufo_caputre_output_entry.dlev }}</dd>
-            <dt>dsize</dt> <dd>{{ ufo_caputre_output_entry.dsize }}</dd>
-    {#        <dt>dropframe</dt> <dd>{{ ufo_caputre_output_entry.dropframe }}</dd>#}
-            </dl>
+                        <div class="col-sm-4">
+                            <div class="card border-light shadow-sm mb-4">
+                              <div class="card-body">
+                                <figure class="figure">
+                                {% if ufo_caputre_output_entry.det_level_preview %}
+                                    <img src="{{ ufo_caputre_output_entry.det_level_preview.url }}" class="event-img figure-img img-fluid" alt="det_level_preview" />
+                                {% else %}
+                                    <p>No image</p>
+                                {% endif %}
+                                <figcaption class="figure-caption">det_level_preview</figcaption>
+                                </figure>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
 
-    {#        {% for field in ufo_caputre_output_entry %}#}
-    {#            {{ field }}#}
+                    <dl class="row">
+                    <dt class="col-sm-3">type</dt> <dd class="col-sm-9">{{ ufo_caputre_output_entry.type }}</dd>
+                    <dt class="col-sm-3">filename_datetime</dt> <dd class="col-sm-9">{{ ufo_caputre_output_entry.filename_datetime }}</dd>
+                    <dt class="col-sm-3">trig</dt> <dd class="col-sm-9">{{ ufo_caputre_output_entry.trig }}</dd>
+                    <dt class="col-sm-3">frames</dt> <dd class="col-sm-9">{{ ufo_caputre_output_entry.frames }}</dd>
+            {#        <dt class="col-sm-3">u2</dt> <dd class="col-sm-9">{{ ufo_caputre_output_entry.u2 }}</dd>#}
+            {#         <dt class="col-sm-3">cx</dt>  <dd class="col-sm-9">{{ ufo_caputre_output_entry.cx }}</dd>#}
+            {#         <dt class="col-sm-3">cy</dt>  <dd class="col-sm-9">{{ ufo_caputre_output_entry.cy }}</dd>#}
+            {#         <dt class="col-sm-3">fps</dt>  <dd class="col-sm-9">{{ ufo_caputre_output_entry.fps }}</dd>#}
+            {#         <dt class="col-sm-3">head</dt>  <dd class="col-sm-9">{{ ufo_caputre_output_entry.head }}</dd>#}
+            {#         <dt class="col-sm-3">tail</dt>  <dd class="col-sm-9">{{ ufo_caputre_output_entry.tail }}</dd>#}
+                     <dt class="col-sm-3">diff</dt>  <dd class="col-sm-9">{{ ufo_caputre_output_entry.diff }}</dd>
+                     <dt class="col-sm-3">sipos</dt>  <dd class="col-sm-9">{{ ufo_caputre_output_entry.sipos }}</dd>
+                     <dt class="col-sm-3">sisize</dt>  <dd class="col-sm-9">{{ ufo_caputre_output_entry.sisize }}</dd>
+                     <dt class="col-sm-3">dlev</dt>  <dd class="col-sm-9">{{ ufo_caputre_output_entry.dlev }}</dd>
+                     <dt class="col-sm-3">dsize</dt>  <dd class="col-sm-9">{{ ufo_caputre_output_entry.dsize }}</dd>
+            {#         <dt class="col-sm-3">dropframe</dt>  <dd class="col-sm-9">{{ ufo_caputre_output_entry.dropframe }}</dd>#}
+                    </dl>
+
+        {#        {% for field in ufo_caputre_output_entry %}#}
+        {#            {{ field }}#}
+        {#        {% endfor %}#}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="mb-4">No records</p>
+        {% endif %}
+        </section>
+
+    {#    {% for instance in ufo_caputre_output_data %}#}
+    {#        <h3>{{ instance.fields|get_item:'clip_filename' }}</h3>#}
+    {#        <img src="{%  %}">{{ instance.fields|get_item:'clip_filename' }}</img>#}
+    {#        <dl class="row">#}
+    {#        {% for field, value in instance.fields.items %}#}
+    {#             <dt class="col-sm-3">{{ field }}</dt>  <dd class="col-sm-9">{{ value }}</dd>#}
     {#        {% endfor %}#}
-        {% endfor %}
-    {% else %}
-    <p>No records</p>
-    {% endif %}
-    </section>
+    {#        </dl>#}
+    {#    {% endfor %}#}
 
-{#    {% for instance in ufo_caputre_output_data %}#}
-{#        <h3>{{ instance.fields|get_item:'clip_filename' }}</h3>#}
-{#        <img src="{%  %}">{{ instance.fields|get_item:'clip_filename' }}</img>#}
-{#        <dl>#}
-{#        {% for field, value in instance.fields.items %}#}
-{#            <dt>{{ field }}</dt> <dd>{{ value }}</dd>#}
-{#        {% endfor %}#}
-{#        </dl>#}
-{#    {% endfor %}#}
 
+        <hr>
+
+        <section id="environment_log">
+        <h2>environment_log</h2>
+
+        {% if environment_log.all.count > 0 %}
+            <div class="card border-light shadow-sm mb-4">
+                <div class="card-body">
+                    {% for environment_log_upload in environment_log %}
+
+                        <h3>Logfile time: {{ environment_log_upload.captured_hour|date:'Y-m-d H:i:s' }}</h3>
+
+                        <dl class="row">
+                             <dt class="col-sm-3">Log upload ID</dt>  <dd class="col-sm-9">{{ environment_log_upload.id }}</dd>
+                             <dt class="col-sm-3">Captured hour</dt>  <dd class="col-sm-9">{{ environment_log_upload.captured_hour|date:'Y-m-d H:i:s' }}</dd>
+                             <dt class="col-sm-3">Log filename</dt>  <dd class="col-sm-9">{{ environment_log_upload.log_filename }}</dd>
+                             <dt class="col-sm-3">Historical</dt>  <dd class="col-sm-9">{{ environment_log_upload.is_historical }}</dd>
+                        </dl>
+
+                        <h4>
+                            Latest measurements added to the logfile
+                            {% if max_count_of_latest_environment_log_measurements <= environment_log_upload.measurements|length %}
+                            (latest {{ environment_log_upload.measurements|length }})
+                            {% else %}
+                            ({{ environment_log_upload.measurements|length }})
+                            {% endif %}
+                        </h4>
+
+                        <div class="table-responsive">
+                            <table class="table table-centered table-nowrap mb-0 rounded">
+                            <thead class="thead-light">
+                            <tr>
+                                <td>measurement_datetime</td>
+                                <td>temperature_in</td>
+                                <td>temperature_out</td>
+                                <td>humidity_in</td>
+                                <td>humidity_out</td>
+                                <td>pressure_in</td>
+                                <td>pressure_out</td>
+                                <td>brightness</td>
+                                <td>fan1_pwm</td>
+                                <td>fan2_pwm</td>
+                                <td>fan1_rpm</td>
+                                <td>fan2_rpm</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for measurement in environment_log_upload.measurements %}
+                            <tr>
+                                <td>{{ measurement.measurement_datetime|date:'Y-m-d H:i:s' }}</td>
+                                <td>{{ measurement.temperature_in }}</td>
+                                <td>{{ measurement.temperature_out }}</td>
+                                <td>{{ measurement.humidity_in }}</td>
+                                <td>{{ measurement.humidity_out }}</td>
+                                <td>{{ measurement.pressure_in }}</td>
+                                <td>{{ measurement.pressure_out }}</td>
+                                <td>{{ measurement.brightness }}</td>
+                                <td>{{ measurement.fan1_pwm }}</td>
+                                <td>{{ measurement.fan2_pwm }}</td>
+                                <td>{{ measurement.fan1_rpm }}</td>
+                                <td>{{ measurement.fan2_rpm }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                            </table>
+                        </div>
+
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <p class="mb-4">No records</p>
+        {% endif %}
+
+        </section>
+
+        <section id="cpu_status">
+            <h2>cpu_status</h2>
+
+            {% if cpu_status.all.count > 0 %}
+                <div class="card border-light shadow-sm mb-4">
+                    <div class="card-body">
+                        <dl class="row">
+                         <dt class="col-sm-3">cpu_freq_mean</dt>  <dd class="col-sm-9">{{ cpu_status.first.cpu_freq_mean }}</dd>
+                         <dt class="col-sm-3">cpu_freq_min</dt>  <dd class="col-sm-9">{{ cpu_status.first.cpu_freq_min }}</dd>
+                         <dt class="col-sm-3">cpu_freq_max</dt>  <dd class="col-sm-9">{{ cpu_status.first.cpu_freq_max }}</dd>
+                         <dt class="col-sm-3">load_avg_percent_1min</dt>  <dd class="col-sm-9">{{ cpu_status.first.load_avg_percent_1min }}</dd>
+                         <dt class="col-sm-3">load_avg_percent_5min</dt>  <dd class="col-sm-9">{{ cpu_status.first.load_avg_percent_5min }}</dd>
+                         <dt class="col-sm-3">load_avg_percent_15min</dt>  <dd class="col-sm-9">{{ cpu_status.first.load_avg_percent_15min }}</dd>
+                         <dt class="col-sm-3">cpu_percent_min</dt>  <dd class="col-sm-9">{{ cpu_status.first.cpu_percent_min }}</dd>
+                         <dt class="col-sm-3">cpu_percent_max</dt>  <dd class="col-sm-9">{{ cpu_status.first.cpu_percent_max }}</dd>
+                         <dt class="col-sm-3">cpu_percent_mean</dt>  <dd class="col-sm-9">{{ cpu_status.first.cpu_percent_mean }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            {% else %}
+                <p class="mb-4">No records</p>
+            {% endif %}
+        </section>
+
+        <section id="disk_usage">
+            <h2>disk_usage</h2>
+
+            {% if disk_usage.all.count > 0 %}
+                <div class="card border-light shadow-sm mb-4">
+                    <div class="card-body">
+                        {% for du_data in disk_usage.all %}
+                            <section>
+                            <h3>{{ du_data.disk_partition.device }} ({{ du_data.disk_partition.mountpoint }}, {{ du_data.disk_partition.fstype }}, {{ du_data.disk_partition.opts }})</h3>
+                            <dl class="row">
+                             <dt class="col-sm-3">total</dt>  <dd class="col-sm-9">{{ du_data.total }}</dd>
+                             <dt class="col-sm-3">used</dt>  <dd class="col-sm-9">{{ du_data.used }}</dd>
+                             <dt class="col-sm-3">free</dt>  <dd class="col-sm-9">{{ du_data.free }}</dd>
+                            </dl>
+                            </section>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <p class="mb-4">No records</p>
+            {% endif %}
+        </section>
+
+        <section id="memory_usage">
+            <h2>memory_usage</h2>
+
+            {% if memory_usage.all.count > 0 %}
+                <div class="card border-light shadow-sm mb-4">
+                    <div class="card-body">
+                    <dl class="row">
+                     <dt class="col-sm-3">virtual_total</dt>  <dd class="col-sm-9">{{ memory_usage.first.virtual_total }}</dd>
+                     <dt class="col-sm-3">virtual_available</dt>  <dd class="col-sm-9">{{ memory_usage.first.virtual_available }}</dd>
+                     <dt class="col-sm-3">virtual_used</dt>  <dd class="col-sm-9">{{ memory_usage.first.virtual_used }}</dd>
+                     <dt class="col-sm-3">virtual_free</dt>  <dd class="col-sm-9">{{ memory_usage.first.virtual_free }}</dd>
+                     <dt class="col-sm-3">swap_total</dt>  <dd class="col-sm-9">{{ memory_usage.first.swap_total }}</dd>
+                     <dt class="col-sm-3">swap_used</dt>  <dd class="col-sm-9">{{ memory_usage.first.swap_used }}</dd>
+                     <dt class="col-sm-3">swap_free</dt>  <dd class="col-sm-9">{{ memory_usage.first.swap_free }}</dd>
+                     <dt class="col-sm-3">swap_percent</dt>  <dd class="col-sm-9">{{ memory_usage.first.swap_percent }}</dd>
+                    </dl>
+                    </div>
+                </div>
+            {% else %}
+                <p class="mb-4">No records</p>
+            {% endif %}
+        </section>
+
+        <section id="ohm">
+            <h2>ohm (Open Hardware Monitor)</h2>
+            {% if ohm.all.count > 0 %}
+                <div class="card border-light shadow-sm mb-4">
+                    <div class="card-body">
+                        {% for sensor_measurement in ohm.all %}
+                            <section>
+                {#            <h3>{{ du_data.disk_partition.device }} ({{ du_data.disk_partition.mountpoint }}, {{ du_data.disk_partition.fstype }}, {{ du_data.disk_partition.opts }})</h3>#}
+                            <dl class="row">
+                                 <dt class="col-sm-3">hardware</dt>
+                                 <dd class="col-sm-9">{{ sensor_measurement.sensor.hardware.name}} ({{ sensor_measurement.sensor.hardware.type}})</dd>
+                                 <dt class="col-sm-3">sensor</dt>
+                                 <dd class="col-sm-9">{{ sensor_measurement.sensor.name }} ({{ sensor_measurement.sensor.type }})</dd>
+                                 <dt class="col-sm-3">value</dt>  <dd class="col-sm-9">{{ sensor_measurement.value }}</dd>
+                                 <dt class="col-sm-3">value_max</dt>  <dd class="col-sm-9">{{ sensor_measurement.value_max }}</dd>
+                                 <dt class="col-sm-3">value_min</dt>  <dd class="col-sm-9">{{ sensor_measurement.value_min }}</dd>
+                            </dl>
+                            </section>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+            <p class="mb-4">No records</p>
+            {% endif %}
+        </section>
 
     <hr>
 
-    <section id="cpu_status">
-    <h2>cpu_status</h2>
+    <div data-spy="scroll" data-target="#processes">
+        <section id="ufo_caputre_output_data">
+        <h2>processes</h2>
 
-    {% if cpu_status.all.count > 0 %}
-    <dl>
-    <dt>cpu_freq_mean</dt> <dd>{{ cpu_status.first.cpu_freq_mean }}</dd>
-    <dt>cpu_freq_min</dt> <dd>{{ cpu_status.first.cpu_freq_min }}</dd>
-    <dt>cpu_freq_max</dt> <dd>{{ cpu_status.first.cpu_freq_max }}</dd>
-    <dt>load_avg_percent_1min</dt> <dd>{{ cpu_status.first.load_avg_percent_1min }}</dd>
-    <dt>load_avg_percent_5min</dt> <dd>{{ cpu_status.first.load_avg_percent_5min }}</dd>
-    <dt>load_avg_percent_15min</dt> <dd>{{ cpu_status.first.load_avg_percent_15min }}</dd>
-    <dt>cpu_percent_min</dt> <dd>{{ cpu_status.first.cpu_percent_min }}</dd>
-    <dt>cpu_percent_max</dt> <dd>{{ cpu_status.first.cpu_percent_max }}</dd>
-    <dt>cpu_percent_mean</dt> <dd>{{ cpu_status.first.cpu_percent_mean }}</dd>
-    </dl>
-    {% else %}
-    <p>No records</p>
-    {% endif %}
-    </section>
+        {% if processes.all.count > 0 %}
+            <div class="card border-light shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-condensed mb-0 rounded table-sm">
+                        <thead class="thead-light">
+                        <tr>
+                            <td>username</td>
+                            <td>name</td>
+                            <td>memory_info_rss</td>
+                            <td>memory_info_vms</td>
+                            <td><u>cpu_percent</u></td>
+                            <td>create_time</td>
+                            <td>pid</td>
+                            <td>ppid</td>
+                            <td>exe</td>
+                            <td>cwd</td>
+                            <td>cmdline</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for process in processes.all %}
+                        <tr>
+                            <td>{{ process.username }}</td>
+                            <td>{{ process.name }}</td>
+                            <td>{{ process.memory_info_rss }}</td>
+                            <td>{{ process.memory_info_vms }}</td>
+                            <td>{{ process.cpu_percent }}</td>
+                            <td>{{ process.create_time }}</td>
+                            <td>{{ process.pid }}</td>
+                            <td>{{ process.ppid }}</td>
+                            <td>{{ process.exe }}</td>
+                            <td>{{ process.cwd }}</td>
+                            <td>{{ process.cmdline }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p class="mb-4">No records</p>
+        {% endif %}
+        </section>
 
-    <section>
-    <h2>disk_usage</h2>
+    </div>
 
-    {% if disk_usage.all.count > 0 %}
-        {% for du_data in disk_usage.all %}
-            <section>
-            <h3>{{ du_data.disk_partition.device }} ({{ du_data.disk_partition.mountpoint }}, {{ du_data.disk_partition.fstype }}, {{ du_data.disk_partition.opts }})</h3>
-            <dl>
-            <dt>total</dt> <dd>{{ du_data.total }}</dd>
-            <dt>used</dt> <dd>{{ du_data.used }}</dd>
-            <dt>free</dt> <dd>{{ du_data.free }}</dd>
-            </dl>
-            </section>
-        {% endfor %}
-    {% else %}
-    <p>No records</p>
-    {% endif %}
-    </section>
+{% endblock content %}
 
-    <section>
-    <h2>memory_usage</h2>
-
-    {% if memory_usage.all.count > 0 %}
-    <dl>
-    <dt>virtual_total</dt> <dd>{{ memory_usage.first.virtual_total }}</dd>
-    <dt>virtual_available</dt> <dd>{{ memory_usage.first.virtual_available }}</dd>
-    <dt>virtual_used</dt> <dd>{{ memory_usage.first.virtual_used }}</dd>
-    <dt>virtual_free</dt> <dd>{{ memory_usage.first.virtual_free }}</dd>
-    <dt>swap_total</dt> <dd>{{ memory_usage.first.swap_total }}</dd>
-    <dt>swap_used</dt> <dd>{{ memory_usage.first.swap_used }}</dd>
-    <dt>swap_free</dt> <dd>{{ memory_usage.first.swap_free }}</dd>
-    <dt>swap_percent</dt> <dd>{{ memory_usage.first.swap_percent }}</dd>
-    </dl>
-    {% else %}
-    <p>No records</p>
-    {% endif %}
-    </section>
-
-    <section>
-    <h2>ohm</h2>
-
-    {% if ohm.all.count > 0 %}
-        {% for sensor_measurement in ohm.all %}
-            <section>
-{#            <h3>{{ du_data.disk_partition.device }} ({{ du_data.disk_partition.mountpoint }}, {{ du_data.disk_partition.fstype }}, {{ du_data.disk_partition.opts }})</h3>#}
-            <dl>
-            <dt>sensor</dt> <dd>{{ sensor_measurement.sensor.name }}</dd>
-            <dt>value</dt> <dd>{{ sensor_measurement.value }}</dd>
-            <dt>value_max</dt> <dd>{{ sensor_measurement.value_max }}</dd>
-            <dt>value_min</dt> <dd>{{ sensor_measurement.value_min }}</dd>
-            </dl>
-            </section>
-        {% endfor %}
-    {% else %}
-    <p>No records</p>
-    {% endif %}
-    </section>
-
-</body>
-</html>
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

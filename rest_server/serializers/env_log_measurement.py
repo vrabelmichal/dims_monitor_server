@@ -27,7 +27,7 @@ class EnvironmentLogUploadSerializer(serializers.Serializer):
     captured_hour = serializers.DateTimeField()
     is_historical = serializers.BooleanField()
 
-    logfile = serializers.FileField(read_only=False, required=False)
+    logfile = serializers.FileField(read_only=False, allow_empty_file=True, required=False)
     data = serializers.CharField(required=False, allow_blank=True)
 
     log_filename = serializers.CharField(required=False, allow_blank=True, default='')

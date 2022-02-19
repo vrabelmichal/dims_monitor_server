@@ -24,7 +24,8 @@ import rest_server.views.web
 import rest_server.views.rest
 
 urlpatterns = [
-    path('', rest_server.views.web.index, name='index'),
+    path('', rest_server.views.web.latest_reports, name='latest_reports'),
+    path('latest-reports-with-events', rest_server.views.web.latest_reports_with_events, name='latest_reports_with_events'),
     path('report/<int:report_id>', rest_server.views.web.report_detail, name='report_detail'),
     path('accounts/', include('django.contrib.auth.urls')),
 

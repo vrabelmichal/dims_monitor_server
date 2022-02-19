@@ -87,4 +87,4 @@ class CpuStatus(models.Model):
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
 
     def __str__(self):
-        return model2str(self)
+        return model2str(self, fields=['cpu_id', 'cpu_freq_mean', 'load_avg_percent_5min'])
