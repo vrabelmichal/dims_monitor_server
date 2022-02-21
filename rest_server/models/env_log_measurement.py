@@ -36,25 +36,32 @@ class EnvironmentLogMeasurement(models.Model):
         help_text='Datetime of the measurement.'
     )
     temperature_in = models.FloatField(
-        help_text='Value of column "temperature_in" inside the Arduino data log file (EnvData).',
+        help_text='Value of column "temperature_in" inside the Arduino data log file (EnvData). '
+        'Unit: degrees of Celsius.',
     )
     temperature_out = models.FloatField(
-        help_text='Value of column "temperature_out" inside the Arduino data log file (EnvData).',
+        help_text='Value of column "temperature_out" inside the Arduino data log file (EnvData). '
+        'Unit: degrees of Celsius.',
     )
     pressure_in = models.FloatField(
-        help_text='Value of column "pressure_in" inside the Arduino data log file (EnvData).',
+        help_text='Value of column "pressure_in" inside the Arduino data log file (EnvData). '
+        'Unit: hPa.',
     )
     pressure_out = models.FloatField(
-        help_text='Value of column "pressure_out" inside the Arduino data log file (EnvData).',
+        help_text='Value of column "pressure_out" inside the Arduino data log file (EnvData). '
+        'Unit: hPa.',
     )
     humidity_in = models.FloatField(
-        help_text='Value of column "humidity_in" inside the Arduino data log file (EnvData).',
+        help_text='Value of column "humidity_in" inside the Arduino data log file (EnvData). '
+                  'Unit: Percent.',
     )
     humidity_out = models.FloatField(
-        help_text='Value of column "humidity_out" inside the Arduino data log file (EnvData).',
+        help_text='Value of column "humidity_out" inside the Arduino data log file (EnvData). '
+                  'Unit: Percent.',
     )
     brightness = models.FloatField(
-        help_text='Value of column "brightness" inside the Arduino data log file (EnvData).',
+        help_text='Brightness from CdS sensor. '
+                  'Value of column "brightness" inside the Arduino data log file (EnvData).',
     )
     fan1_rpm = models.FloatField(
         help_text='Value of column "fan1_rpm" inside the Arduino data log file (EnvData).',

@@ -123,15 +123,20 @@ class EnvironmentLogUploadSerializer(serializers.Serializer):
 
         ofst = 2
 
+        # Degree Celsius
         temp1 = float(self._sanitize_val(row[ofst + 1]))
         temp2 = float(self._sanitize_val(row[ofst + 2]))
 
+        # Percent
         hum1 = float(self._sanitize_val(row[ofst + 4]))
         hum2 = float(self._sanitize_val(row[ofst + 5]))
 
+        # hPa
         press1 = float(self._sanitize_val(row[ofst + 7]))
         press2 = float(self._sanitize_val(row[ofst + 8]))
 
+        # Brightness from CdS sensor, range: 0-102.3
+        # Min = 0 (dark), Max = 255 (dark)
         bright = float(self._sanitize_val(row[ofst + 10]))
 
         pwm1 = float(self._sanitize_val(row[ofst + 12]))
