@@ -7,6 +7,8 @@ class ProcessSerializer(serializers.ModelSerializer):
 
     cmdline = serializers.ListSerializer(
         child=serializers.CharField(allow_blank=True),
+        allow_empty=True, required=False,
+        allow_null=True
     )
 
     report = serializers.PrimaryKeyRelatedField(
@@ -23,5 +25,6 @@ class ProcessSerializer(serializers.ModelSerializer):
         return result
 
     def create(self, validated_data):
-        validated_data['cmdline'] = '\t'.join(validated_data['cmdline'])
+        cmdline = validated_data.get('cmdline', None)
+        validated_data['cmdline'] = '\t'.join(cmdline) if isinstance(cmdline, (list, tuple)) else None
         return super().create(validated_data)

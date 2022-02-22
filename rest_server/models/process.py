@@ -38,11 +38,11 @@ class Process(models.Model):
                   'which can also be > 100.0 in case of a process running multiple threads on different CPUs. '
                   'See: https://psutil.readthedocs.io/en/latest/#psutil.Process.cpu_percent'
     )
-    memory_info_rss = models.IntegerField(
+    memory_info_rss = models.BigIntegerField(
         verbose_name='Resident Set Size',
         help_text='The non-swapped physical memory a process has used.'
     )
-    memory_info_vms = models.IntegerField(
+    memory_info_vms = models.BigIntegerField(
         verbose_name='Virtual Memory Size',
         help_text='The total amount of virtual memory used by the process.'
     )
