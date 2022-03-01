@@ -51,8 +51,8 @@ class ComplexReportList(APIView):
 
                 if data_compression == 'zlib':
                     import zlib
-                    from django.core.files.uploadedfile import InMemoryUploadedFile
-                    if not isinstance(request_data, InMemoryUploadedFile):
+                    from django.core.files.uploadedfile import UploadedFile
+                    if not isinstance(request_data, UploadedFile):
                         raise RuntimeError('Unexpected request data')
                     request_data = request_data.read()
                     request_data = zlib.decompress(request_data).decode('utf8')
