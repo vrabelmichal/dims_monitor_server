@@ -1,7 +1,7 @@
 {% extends "layouts/base.html" %}
 {% load misc %}
 
-{% block title %} Sign IN {% endblock %}
+{% block title %}Latest reports {% if segment == 'latest_reports_with_events' %}(with events){% endif %}{% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
