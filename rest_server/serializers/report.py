@@ -45,7 +45,7 @@ class ReportNestedSerializer(serializers.ModelSerializer):
     attachments = serializers.DictField(    # module
         child=serializers.DictField(        # entry
             child=serializers.DictField(    # file
-                child=serializers.FileField()
+                child=serializers.FileField(allow_empty_file=True)
             )
         ),
         read_only=False,
