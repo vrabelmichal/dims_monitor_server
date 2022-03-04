@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def latest_reports(request):
 
-    stations = Station.objects.all()
+    stations = Station.objects.all().order_by('-priority')
     latest_reports_per_station = dict()
     count_ufo_outputs_per_station = dict()
     for station in stations:
@@ -42,7 +42,7 @@ def latest_reports(request):
 @login_required
 def latest_reports_with_events(request):
 
-    stations = Station.objects.all()
+    stations = Station.objects.all().order_by('-priority')
     latest_reports_per_station = dict()
     count_ufo_outputs_per_station = dict()
     for station in stations:
