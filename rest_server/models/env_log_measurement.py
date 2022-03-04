@@ -32,6 +32,12 @@ class EnvironmentLogUpload(models.Model):
 
 
 class EnvironmentLogMeasurement(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['measurement_datetime', 'log_upload'], name='unique_pair_datetime_log_upload'),
+            models.UniqueConstraint(fields=['measurement_datetime', 'station'], name='unique_pair_datetime_station'),
+        ]
+
     measurement_datetime = models.DateTimeField(
         help_text='Datetime of the measurement.'
     )
@@ -78,9 +84,3 @@ class EnvironmentLogMeasurement(models.Model):
 
     log_upload = models.ForeignKey(EnvironmentLogUpload, on_delete=models.CASCADE)
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['measurement_datetime', 'log_upload'], name='unique_pair_datetime_log_upload'),
-            models.UniqueConstraint(fields=['measurement_datetime', 'station'], name='unique_pair_datetime_station'),
-        ]

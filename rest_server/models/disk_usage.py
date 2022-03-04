@@ -11,10 +11,19 @@ class DiskPartition(models.Model):
     opts = models.CharField(max_length=255)
 
     def __str__(self):
-        return model2str(self)
+        # return model2str(self, fields=('mountpoint', ))
+        model_name = self.__class__.__name__
+        fields_list = ['device']
+        if self.device != self.mountpoint:
+            fields_list.append('mountpoint')
+        fields_str = ', '.join([f'{n}: {getattr(self, n)}' for n in fields_list])
+        return f'{model_name} ({fields_str})'
 
 
 class DiskUsage(models.Model):
+    class Meta:
+        verbose_name_plural = "disk usage records"
+
     disk_partition = models.ForeignKey(DiskPartition, on_delete=models.CASCADE)
     total = models.BigIntegerField()
     used = models.BigIntegerField()
@@ -26,4 +35,4 @@ class DiskUsage(models.Model):
         return self.used / self.total
 
     def __str__(self):
-        return model2str(self)
+        return model2str(self, fields=('disk_partition', 'used', ))

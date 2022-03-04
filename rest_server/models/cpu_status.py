@@ -5,6 +5,9 @@ from rest_server.utils import model2str
 
 
 class CpuStatus(models.Model):
+    class Meta:
+        verbose_name_plural = "cpu status records"
+
     cpu_id = models.CharField(default='all', max_length=15,
                               verbose_name='Unique identifier of a CPU ("all" for measurements across all CPUs)')
 

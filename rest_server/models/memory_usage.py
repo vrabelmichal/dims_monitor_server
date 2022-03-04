@@ -5,6 +5,9 @@ from rest_server.utils import model2str
 
 
 class MemoryUsage(models.Model):
+    class Meta:
+        verbose_name_plural = "memory usage records"
+
     virtual_total = models.BigIntegerField(help_text='total physical memory (exclusive swap)')
     virtual_available = models.BigIntegerField(help_text='the memory that can be given instantly to processes without the system going into swap')
     virtual_used = models.BigIntegerField(help_text='memory used, calculated differently depending on the platform and designed for informational purposes only. total - free does not necessarily match used.')  #

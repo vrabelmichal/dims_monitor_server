@@ -23,6 +23,13 @@ def preview_image_dir_path(instance, filename):
 
 
 class UfoCaptureOutputEntry(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['report', 'clip_filename'], name='unique_pair_report_clip'),
+            models.UniqueConstraint(fields=['station', 'clip_filename'], name='unique_pair_station_clip')
+        ]
+        verbose_name_plural = "ufo capture output entries"
+
     snapshot_filename = models.CharField(
         max_length=260,
         help_text='Filename of a file on the remote station. '
@@ -236,12 +243,6 @@ class UfoCaptureOutputEntry(models.Model):
 
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['report', 'clip_filename'], name='unique_pair_report_clip'),
-            models.UniqueConstraint(fields=['station', 'clip_filename'], name='unique_pair_station_clip')
-        ]
 
     def __str__(self):
         model_name = self.__class__.__name__
