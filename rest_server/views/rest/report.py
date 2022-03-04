@@ -5,7 +5,6 @@ import re
 
 from rest_framework import generics, status
 from rest_framework.authentication import BasicAuthentication, TokenAuthentication
-from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -101,11 +100,6 @@ class ComplexReportList(APIView):
                 rns.save()
                 return Response(data=dict(status='Created'), status=status.HTTP_201_CREATED)
 
-            # except ValidationError as e:
-            #     print(e.detail)
-                # print(e.detail['hash'])
-                # print(e.detail['hash'][0].code)
-                # pass
         except Exception as e:
             return Response({e.__class__.__name__: str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
