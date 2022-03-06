@@ -13,7 +13,7 @@ import os.path
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -23,10 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-k#5xuyxsp(s-u5ao0kv^ouj3ph=d6xfct+-=jevc()l)moqld8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -66,7 +65,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media'
+                'django.template.context_processors.media',
+                'django_settings_export.settings_export',
             ],
         },
     },
@@ -78,12 +78,12 @@ WSGI_APPLICATION = 'dims_monitor_server.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -135,11 +135,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # MEDIA
 
-MEDIA_ROOT = os.path.realpath(os.path.join(
-    os.path.dirname(__file__), '..', 'media'
-))
+MEDIA_ROOT = BASE_DIR / 'media'
 
 MEDIA_URL = '/media/'
 
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/'
+
+# Uploads directory
+FILE_UPLOAD_TEMP_DIR = os.path.join(os.sep, 'tmp', 'django_monitor_server')
+os.makedirs(FILE_UPLOAD_TEMP_DIR, exist_ok=True)
+
+# rest_server application settings
+
+# REST_SERVER_GRAFANA_LINK = ''
+
+# settings export
+
+SETTINGS_EXPORT = [
+    'REST_SERVER_GRAFANA_LINK'
+]
