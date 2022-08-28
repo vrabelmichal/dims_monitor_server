@@ -155,3 +155,20 @@ os.makedirs(FILE_UPLOAD_TEMP_DIR, exist_ok=True)
 SETTINGS_EXPORT = [
     'REST_SERVER_GRAFANA_LINK'
 ]
+
+
+LOGGING_CONFIG = 'logging.config.dictConfig'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
