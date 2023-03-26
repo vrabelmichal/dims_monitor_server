@@ -146,6 +146,8 @@ LOGIN_REDIRECT_URL = '/'
 FILE_UPLOAD_TEMP_DIR = os.path.join(os.sep, 'tmp', 'django_monitor_server')
 os.makedirs(FILE_UPLOAD_TEMP_DIR, exist_ok=True)
 
+LOG_DIR = BASE_DIR / 'log'
+
 # rest_server application settings
 
 # REST_SERVER_GRAFANA_LINK = ''
@@ -166,9 +168,22 @@ LOGGING = {
         'console': {
             'class': 'logging.StreamHandler',
         },
+        'operations_log_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'args': (str(LOG_DIR / 'operations.log'), 'w+'),
+        }
     },
     'root': {
         'handlers': ['console'],
         'level': 'WARNING',
     },
+    'loggers': {
+        'dims_monitor_server': {
+            'handlers': ['operations_log_file'],
+            'level': 'INFO',
+            'propagate': False
+        }
+    }
 }
+
