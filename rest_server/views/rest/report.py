@@ -3,7 +3,7 @@ import json
 import logging
 import re
 
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.authentication import BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -13,9 +13,18 @@ from rest_server.models import Report, Station
 from rest_server.serializers import ReportNestedSerializer
 
 
+# TODO add this permission check and test if this code works
+class HasCreateReportPermission(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.user.has_perm('rest_server.add_report')
+
+
 class ComplexReportList(APIView):
     authentication_classes = [BasicAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [
+        IsAuthenticated
+        # ,HasCreateReportPermission  # TODO make this work
+    ]
 
     # monitor_name_serializer_mapping = dict(
     #     hdd_usage=DiskUsageSerializer,
