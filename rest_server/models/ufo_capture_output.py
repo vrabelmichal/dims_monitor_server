@@ -7,19 +7,40 @@ from rest_server.models.station import Station
 from rest_server.models.report import Report
 
 
+def get_base_preview_image_dir_path(station_name):
+    return os.path.join(
+        apps.get_app_config('rest_server').REPORT_BASE_DATA_DIR,
+        str(station_name),
+    )
+
+
+def get_preview_image_dir_path(
+        station_name,
+        report_start_utc,
+        report_hash,
+        filename,
+):
+    return os.path.join(
+        get_base_preview_image_dir_path(station_name),
+        '{:%Y%m%d-%H%M%S}--{}'.format(
+            report_start_utc,
+            report_hash
+        ),
+        filename
+    )
+
+
 def preview_image_dir_path(instance, filename):
     # If you are using the default FileSystemStorage,
     # the string value will be appended to your MEDIA_ROOT path
     # to form the location on the local filesystem where uploaded files will be stored.
-    return os.path.join(
-        apps.get_app_config('rest_server').REPORT_BASE_DATA_DIR,
-        str(instance.station.name),
-        '{:%Y%m%d-%H%M%S}--{}'.format(
-            instance.report.start_utc,
-            instance.report.hash
-        ),
-        filename
+    return get_preview_image_dir_path(
+        instance.station.name,
+        instance.report.start_utc,
+        instance.report.hash,
+        filename,
     )
+
 
 
 class UfoCaptureOutputEntry(models.Model):
