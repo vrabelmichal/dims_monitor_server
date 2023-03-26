@@ -1,0 +1,1 @@
+from .ufo_thumbnails_maintenance import UfoThumbnailsMaintenanceForm
