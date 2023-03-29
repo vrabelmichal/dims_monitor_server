@@ -53,6 +53,7 @@ def _resize_image(
 
 
 class ResizeImagesStats(typing.NamedTuple):
+    total_expected_successes: int
     total_num_successful_reports: int
     total_num_failed_reports: int
     total_num_partially_failed_reports: int
@@ -62,8 +63,8 @@ class ResizeImagesStats(typing.NamedTuple):
 
 def _resize_images(
         station_ids,
-        start_date,
-        end_date,
+        start_datetime,
+        end_datetime,
         resize_det_level_preview,
         resize_long_term_avg_preview,
         resize_peak_hold_preview,
@@ -72,6 +73,7 @@ def _resize_images(
         jpeg_quality,
         logger=THUMB_MAINTENANCE_LOGGER
 ):
+    total_expected_successes = 0
     total_num_successful_reports = 0
     total_num_failed_reports = 0
     total_num_partially_failed_reports = 0
@@ -79,14 +81,10 @@ def _resize_images(
     total_num_failed_operations = 0
 
     for ufo_capture_entry in UfoCaptureOutputEntry.objects.filter(
-        xml_datetime__gte=start_date,
-        xml_datetime__lte=end_date,
+        xml_datetime__gte=start_datetime,
+        xml_datetime__lte=end_datetime,
         station_id__in=station_ids
-    ).all().values(
-        'det_level_preview', 'long_term_avg_preview', 'peak_hold_preview',
-        'report_id',
-        # 'report__start_utc',
-    ):
+    ).all():
         # report_start_utc = ufo_capture_entry.report__start_utc
         report_id = ufo_capture_entry.report_id
         det_level_preview = ufo_capture_entry.det_level_preview
@@ -99,13 +97,15 @@ def _resize_images(
         num_successful = 0
         num_failed = 0
 
-        for preview_image_pathname, apply_resize in (
+        for preview_image_file_field, apply_resize in (
                 (det_level_preview, resize_det_level_preview),
                 (long_term_avg_preview, resize_long_term_avg_preview),
                 (peak_hold_preview, resize_peak_hold_preview)
         ):
-            if not apply_resize:
+            if not apply_resize or not preview_image_file_field:
                 continue
+            preview_image_pathname = preview_image_file_field.path
+
             expected_successes += 1
 
             try:
@@ -122,20 +122,23 @@ def _resize_images(
                 num_failed += 1
                 THUMB_MAINTENANCE_LOGGER.info(
                     'Failed to resize image "%s" (%s: %s; report id: %d).',
-                    preview_image_pathname, e.__class__.__name__, str(e), report_id
+                    preview_image_file_field, e.__class__.__name__, str(e), report_id
                 )
 
         total_num_successful_operations += num_successful
         total_num_failed_operations += num_failed
 
-        if expected_successes == num_successful:
-            total_num_successful_reports += 1
-        elif num_successful > 0:
-            total_num_partially_failed_reports += 1
-        else:
-            total_num_failed_reports += 1
+        if expected_successes != 0:
+            if expected_successes == num_successful:
+                total_num_successful_reports += 1
+            elif num_successful > 0:
+                total_num_partially_failed_reports += 1
+            else:
+                total_num_failed_reports += 1
+            total_expected_successes += 1
 
     return ResizeImagesStats(
+        total_expected_successes=total_expected_successes,
         total_num_successful_reports=total_num_successful_reports,
         total_num_failed_reports=total_num_failed_reports,
         total_num_partially_failed_reports=total_num_partially_failed_reports,
@@ -148,11 +151,11 @@ def _resize_images(
 def ufo_thumbnails_maintenance(request):
 
     if request.method == 'POST':
-        form = UfoThumbnailsMaintenanceForm(request.POST)
+        form = UfoThumbnailsMaintenanceForm(request.POST, request_user=request.user)
         if form.is_valid():
             stations = form.cleaned_data['stations']
-            start_date = form.cleaned_data['start_date']
-            end_date = form.cleaned_data['end_date']
+            start_datetime = form.cleaned_data['start_datetime']
+            end_datetime = form.cleaned_data['end_datetime']
             resize_det_level_preview = form.cleaned_data['det_level_preview']
             resize_long_term_avg_preview = form.cleaned_data['long_term_avg_preview']
             resize_peak_hold_preview = form.cleaned_data['peak_hold_preview']
@@ -163,8 +166,8 @@ def ufo_thumbnails_maintenance(request):
 
             s = _resize_images(
                 station_ids=stations,
-                start_date=start_date,
-                end_date=end_date,
+                start_datetime=start_datetime,
+                end_datetime=end_datetime,
                 resize_det_level_preview=resize_det_level_preview,
                 resize_long_term_avg_preview=resize_long_term_avg_preview,
                 resize_peak_hold_preview=resize_peak_hold_preview,
@@ -172,24 +175,29 @@ def ufo_thumbnails_maintenance(request):
                 height=height,
                 jpeg_quality=jpeg_quality
             )
-
-            messages.success(
-                request,
-                f'Successfully processed {s.total_num_successful_reports} reports, '
-                f'some error occurred when processing {s.total_num_partially_failed_reports} reports, '
-                f'failed to process {s.total_num_failed_reports} reports '
-                f'(successfully processed {s.total_num_successful_operations} files, '
-                f'failed to process {s.total_num_failed_operations} entries).'
-            )
+            if s.total_expected_successes == 0:
+                messages.warning(request, 'Event preview images maintenance: No valid entries found')
+            else:
+                messages.add_message(
+                    request,
+                    messages.WARNING if s.total_num_failed_operations > 0 else messages.INFO,
+                    'Event preview images maintenance: '
+                    f'Successfully processed {s.total_num_successful_reports} reports, '
+                    f'some error occurred when processing {s.total_num_partially_failed_reports} reports, '
+                    f'failed to process {s.total_num_failed_reports} reports '
+                    f'(successfully processed {s.total_num_successful_operations} files, '
+                    f'failed to process {s.total_num_failed_operations} entries).'
+                )
             return redirect('ufo_thumbnails_maintenance')
     else:
         form = UfoThumbnailsMaintenanceForm()
 
-    template = loader.get_template('ufo_thumbnails_maintenance.html', {'form': form})  # getting our template
+    template = loader.get_template('ufo_thumbnails_maintenance.html')  # getting our template
 
     return HttpResponse(template.render(
         dict(
-            segment='ufo_thumbnails_maintenance'
+            segment='ufo_thumbnails_maintenance',
+            form=form
         ),
         request
     ))
