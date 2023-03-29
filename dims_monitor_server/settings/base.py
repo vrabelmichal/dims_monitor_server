@@ -171,7 +171,7 @@ LOGGING = {
         'operations_log_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'args': (str(LOG_DIR / 'operations.log'), 'w+'),
+            'filename': str(LOG_DIR / 'operations.log')
         }
     },
     'root': {
