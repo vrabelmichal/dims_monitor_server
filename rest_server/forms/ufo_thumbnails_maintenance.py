@@ -23,6 +23,8 @@ class UfoThumbnailsMaintenanceForm(forms.Form):
     height = forms.IntegerField(min_value=34, max_value=1920, label='New height', initial=270)
     jpeg_quality = forms.IntegerField(min_value=10, max_value=100, label='JPEG quality', initial=50)
     confirmation_password = forms.CharField(widget=forms.PasswordInput, label='Confirmation password')
+    log_every_operation = forms.BooleanField(required=False, label='Log every image operation', initial=True)
+    always_resize = forms.BooleanField(required=False, label='Always resize', initial=False)
 
     def clean_confirmation_password(self):
         confirmation_password = self.cleaned_data['confirmation_password']

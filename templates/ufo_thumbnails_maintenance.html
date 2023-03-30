@@ -54,7 +54,7 @@
         </div>
       </div>
       <fieldset class="row mb-3">
-        <legend class="col-form-label col-sm-2 pt-0">Image types</legend>
+        <legend class="col-form-label col-sm-2 pt-0">Processed image types</legend>
         <div class="col-sm-10">
           <div class="form-check">
             <input type="checkbox" id="det_level_preview" name="det_level_preview" class="form-check-input" {% if form.det_level_preview.value %}checked{% endif %}>
@@ -106,6 +106,27 @@
           {% endif %}
         </div>
       </div>
+
+      <fieldset class="row mb-3">
+        <legend class="col-form-label col-sm-2 pt-0">Other options</legend>
+        <div class="col-sm-10">
+          <div class="form-check">
+            <input type="checkbox" id="log_every_operation" name="log_every_operation" class="form-check-input" {% if form.log_every_operation.value %}checked{% endif %}>
+            <label for="log_every_operation" class="form-check-label">{{ form.log_every_operation.label }}</label>
+            {% if form.log_every_operation.errors %}
+            <div class="text-danger">{{ form.log_every_operation.errors }}</div>
+            {% endif %}
+          </div>
+          <div class="form-check">
+            <input type="checkbox" id="always_resize" name="always_resize" class="form-check-input" {% if form.always_resize.value %}checked{% endif %}>
+            <label for="always_resize" class="form-check-label">{{ form.always_resize.label }}</label>
+            {% if form.always_resize.errors %}
+            <div class="text-danger">{{ form.always_resize.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </fieldset>
+
       <div class="row mb-3">
         <label for="confirmation_password" class="col-sm-2 col-form-label">User password for confirmation</label>
         <div class="col-sm-10">
