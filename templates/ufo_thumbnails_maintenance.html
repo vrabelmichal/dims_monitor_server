@@ -36,7 +36,7 @@
       <div class="row mb-3">
         <label for="start_datetime" class="col-sm-2 col-form-label">Starting date</label>
         <div class="col-sm-10">
-          <input type="datetime-local" id="start_datetime" name="start_datetime" class="form-control" value="{{ form.start_datetime.value|date:'Y-m-d\TH:i:s' }}">
+          <input type="datetime-local" id="start_datetime" name="start_datetime" class="form-control" value="{{ form.start_datetime.value|date:'Y-m-d\TH:i' }}">
           {% if form.start_datetime.errors %}
               ERRORS:
           <div class="text-danger">{{ form.start_datetime.errors }}</div>
@@ -46,7 +46,7 @@
       <div class="row mb-3">
         <label for="end_datetime" class="col-sm-2 col-form-label">Ending date</label>
         <div class="col-sm-10">
-          <input type="datetime-local" id="end_datetime" name="end_datetime" class="form-control" value="{{ form.end_datetime.value|date:'Y-m-d\TH:i:s' }}">
+          <input type="datetime-local" id="end_datetime" name="end_datetime" class="form-control" value="{{ form.end_datetime.value|date:'Y-m-d\TH:i' }}">
           {% if form.end_datetime.errors %}
               ERRORS:
           <div class="text-danger">{{ form.end_datetime.errors }}</div>
@@ -132,10 +132,13 @@
         <div class="col-sm-10">
           <input type="password" id="confirmation_password" name="confirmation_password" class="form-control">
           {% if form.confirmation_password.errors %}
-          <div class="text-danger">{{ form.confirmation_password.errors.0 }}</div>
+          <div class="text-danger">{{ form.confirmation_password.errors }}</div>
           {% endif %}
         </div>
       </div>
+        <div class="alert alert-info" role="alert">
+          Note this action uses Celery (and Redis) to handle the background processing.
+        </div>
       <button type="submit" class="btn btn-primary">Resize thumbnail images</button>
     </form>
 

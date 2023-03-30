@@ -1,3 +1,5 @@
+import datetime
+
 from django import forms
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
@@ -39,20 +41,39 @@ class UfoThumbnailsMaintenanceForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.request_user = kwargs.pop('request_user', None)
         super().__init__(*args, **kwargs)
-        # Update the end date field with the current date minus 1 month
         self.fields['stations'].initial = Station.objects.all().values_list('id', flat=True)
-        self.fields['start_datetime'].initial = (
-            UfoCaptureOutputEntry.objects.order_by('filename_datetime').first().filename_datetime
+        self.fields['start_datetime'].initial = _round_time_down(
+            UfoCaptureOutputEntry.objects.order_by('filename_datetime').first().filename_datetime,
+            60
         )
-        self.fields['end_datetime'].initial = timezone.now() - relativedelta(months=1)
-        # self.fields['confirmation_password'].validators.append(self.clean_confirmation_password)
+        self.fields['end_datetime'].initial = _round_time_up(timezone.now() - relativedelta(months=1), 60)
 
 
-    # from django.contrib.auth.models import User
-    # class Meta:
-    #     model = YourModel
-    #
-    # def __init__(self, *args, **kwargs):
-    #     super(ChoiceForm, self).__init__(*args, **kwargs)
-    #     self.fields['countries'] =  ModelChoiceField(queryset=YourModel.objects.all()),
-    #                                          empty_label="Choose a countries",)
+def _round_time(dt=None, roundTo=60):
+    """Round a datetime object to any time lapse in seconds
+    dt : datetime.datetime object, default now.
+    roundTo : Closest number of seconds to round to, default 1 minute.
+    Author: Thierry Husson 2012 - Use it as you want but don't blame me.
+    """
+    if dt == None : dt = datetime.datetime.now()
+    seconds = (dt.replace(tzinfo=None) - dt.min).seconds
+    rounding = (seconds+roundTo/2) // roundTo * roundTo
+    return dt + datetime.timedelta(0,rounding-seconds,-dt.microsecond)
+
+
+def _round_time_down(dt=None, roundTo=60):
+    if dt == None: dt = datetime.datetime.now()
+    seconds = (dt.replace(tzinfo=None) - dt.min).seconds
+    rounding = seconds // roundTo * roundTo
+    return dt + datetime.timedelta(0,rounding-seconds,-dt.microsecond)
+
+
+def _round_time_up(dt=None, roundTo=60):
+    if dt == None: dt = datetime.datetime.now()
+    seconds = (dt.replace(tzinfo=None) - dt.min).seconds
+    # probably not the most optimal solution
+    if seconds % roundTo != 0:
+        rounding = (seconds+roundTo) // roundTo * roundTo
+    else:
+        rounding = seconds
+    return dt + datetime.timedelta(0,rounding-seconds,-dt.microsecond)
