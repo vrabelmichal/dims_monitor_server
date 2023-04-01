@@ -1,3 +1,4 @@
+import json
 import logging
 
 from django.db import transaction, IntegrityError
@@ -34,8 +35,8 @@ class ReportNestedSerializer(serializers.ModelSerializer):
         slug_field='name', queryset=Station.objects.all()
     )
 
-    disk_usage = DiskUsageNestedSerializer(many=True, read_only=False, required=False)  # intentionally singular
-    memory_usage = MemoryUsageNestedSerializer(many=True, read_only=False, required=False)  # intentionally singular
+    disk_usage = DiskUsageNestedSerializer(many=True, read_only=False, required=False)
+    memory_usage = MemoryUsageNestedSerializer(many=True, read_only=False, required=False)
     cpu_status = CpuStatusNestedSerializer(many=True, read_only=False, required=False)
     ohm = OhmSensorMeasurementNestedSerializer(many=True, read_only=False, required=False)
     ufo_capture_output = UfoCaptureOutputNestedSerializer(many=True, read_only=False, required=False)
@@ -60,7 +61,7 @@ class ReportNestedSerializer(serializers.ModelSerializer):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._logger = logging.getLogger('rest_server.ReportNestedSerializer')
+        self._logger = logging.getLogger('dims_monitor_server.rest_server.serializers.ReportNestedSerializer')
 
     def create(self, validated_data):
 
@@ -123,11 +124,17 @@ class ReportNestedSerializer(serializers.ModelSerializer):
                         except IntegrityError as e:
                             if module_name not in integrity_errors_dict:
                                 integrity_errors_dict[module_name] = []
-                            entry_hash = hash(frozenset(sorted(module_data_entry.items())))
-                            integrity_errors_dict[module_name].append(entry_hash)
+                            # entry_hash = hash(frozenset(sorted(module_data_entry.items())))
+                            # integrity_errors_dict[module_name].append(entry_hash)
+                            integrity_errors_dict[module_name].append(module_data_entry)
+                            try:
+                                module_data_entry_str = json.dumps(module_data_entry)
+                            except Exception as e:
+                                module_data_entry_str = '[Failed to encode:]' + str(module_data_entry)
+                            maybe_dots_str = '...' if len(module_data_entry_str) > 255 else ''
                             self._logger.warning(
                                 f'Integrity error in report #{report.id} is being ignored '
-                                f'(module: {module_name}, entry hash: {integrity_errors_dict[module_name]})'
+                                f'(module: {module_name}, entry: {module_data_entry_str[:255]}{maybe_dots_str})'
                             )
 
             if len(integrity_errors_dict) == 0:
