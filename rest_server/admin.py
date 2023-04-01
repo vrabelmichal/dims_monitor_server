@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from rest_server.models import DiskPartition, DiskUsage, CpuStatus, OhmSensorMeasurement, OhmHardwareInformation, \
-    OhmSensorInformation, OhmSensorParameter, UfoCaptureOutputEntry, EnvironmentLogUpload, Station
+    OhmSensorInformation, OhmSensorParameter, UfoCaptureOutputEntry, EnvironmentLogUpload, Station, ObservingStation
 from rest_server.models import Report
 
 admin.site.register(Report)
@@ -15,6 +15,7 @@ admin.site.register(OhmSensorInformation)
 admin.site.register(OhmSensorParameter)
 admin.site.register(UfoCaptureOutputEntry)
 admin.site.register(EnvironmentLogUpload)
+admin.site.register(ObservingStation)
 
 admin.site.site_header = "DIMS REST Server Administration"
 admin.site.site_title = "DIMS REST Server Administration"
