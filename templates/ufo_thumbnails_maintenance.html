@@ -81,7 +81,7 @@
       </fieldset>
       <div class="row mb-3">
         <label for="width" class="col-sm-2 col-form-label">New width</label>
-        <div class="col-sm-10 input-group has-validation">
+        <div class="col-sm-10">
           <input type="number" id="width" name="width" class="form-control" min="{{ form.width.field.min_value }}" max="{{ form.width.field.max_value }}" value="{{ form.width.value|default_if_none:480 }}">
           {% if form.width.errors %}
           <div class="text-danger">{{ form.width.errors }}</div>
@@ -90,7 +90,7 @@
       </div>
       <div class="row mb-3">
         <label for="height" class="col-sm-2 col-form-label">New height</label>
-        <div class="col-sm-10 input-group has-validation">
+        <div class="col-sm-10">
           <input type="number" id="height" name="height" class="form-control" min="{{ form.height.field.min_value }}" max="{{ form.height.field.max_value }}" value="{{ form.height.value|default_if_none:270 }}">
           {% if form.height.errors %}
           <div class="text-danger">{{ form.height.errors }}</div>
@@ -99,7 +99,7 @@
       </div>
       <div class="row mb-3">
         <label for="jpeg_quality" class="col-sm-2 col-form-label">JPEG quality</label>
-        <div class="col-sm-10 input-group has-validation">
+        <div class="col-sm-10">
           <input type="number" id="jpeg_quality" name="jpeg_quality" class="form-control" min="{{ form.jpeg_quality.field.min_value }}" max="{{ form.jpeg_quality.field.max_value }}" value="{{ form.jpeg_quality.value|default_if_none:50 }}">
           {% if form.jpeg_quality.errors %}
           <div class="text-danger">{{ form.jpeg_quality.errors }}</div>
