@@ -19,7 +19,7 @@ from rest_server.models.ufo_capture_output import get_base_preview_image_dir_pat
 
 from dims_monitor_server.celery import app as celery_app
 
-THUMB_MAINTENANCE_LOGGER = logging.getLogger('dims_monitor_server.ufo_thumbnails_maintenance')
+THUMB_MAINTENANCE_LOGGER = logging.getLogger('dims_monitor_server.rest_server.web.ufo_thumbnails_maintenance')
 
 
 def _resize_image(
