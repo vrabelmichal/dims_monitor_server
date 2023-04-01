@@ -13,17 +13,16 @@ from rest_server.models import Report, Station
 from rest_server.serializers import ReportNestedSerializer
 
 
-# TODO add this permission check and test if this code works
 class HasCreateReportPermission(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
+    def has_permission(self, request, view):
         return request.user.has_perm('rest_server.add_report')
 
 
 class ComplexReportList(APIView):
     authentication_classes = [BasicAuthentication, TokenAuthentication]
     permission_classes = [
-        IsAuthenticated
-        # ,HasCreateReportPermission  # TODO make this work
+        IsAuthenticated,
+        HasCreateReportPermission
     ]
 
     # monitor_name_serializer_mapping = dict(
