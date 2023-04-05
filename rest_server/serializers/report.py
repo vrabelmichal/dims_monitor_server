@@ -127,10 +127,11 @@ class ReportNestedSerializer(serializers.ModelSerializer):
                             # entry_hash = hash(frozenset(sorted(module_data_entry.items())))
                             # integrity_errors_dict[module_name].append(entry_hash)
                             integrity_errors_dict[module_name].append(module_data_entry)
-                            try:
-                                module_data_entry_str = json.dumps(module_data_entry)
-                            except Exception as e:
-                                module_data_entry_str = '[Failed to encode:]' + str(module_data_entry)
+                            # try:
+                            #     module_data_entry_str = json.dumps(module_data_entry)
+                            # except Exception as e:
+                            #     module_data_entry_str = '[Failed to encode:]' + str(module_data_entry)
+                            module_data_entry_str = '[Failed due to integrity error:]' + str(module_data_entry)
                             maybe_dots_str = '...' if len(module_data_entry_str) > 255 else ''
                             self._logger.warning(
                                 f'Integrity error in report #{report.id} is being ignored '
