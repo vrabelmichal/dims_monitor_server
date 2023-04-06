@@ -164,14 +164,26 @@ LOGGING_CONFIG = 'logging.config.dictConfig'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+        'simple': {
+            'format': '{levelname} {asctime} {message}',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
         },
         'operations_log_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': str(LOG_DIR / 'operations.log')
+            'filename': str(LOG_DIR / 'operations.log'),
+            'formatter': 'verbose',
         }
     },
     'root': {
