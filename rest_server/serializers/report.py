@@ -9,8 +9,8 @@ from rest_framework.serializers import ListSerializer
 from rest_server.models import Report, Station
 from rest_server.serializers.env_log_measurement import EnvironmentLogUploadSerializer
 from rest_server.serializers.process import ProcessSerializer
-from rest_server.serializers.ufo_capture_output import UfoCaptureOutputNestedSerializer
-import rest_server.serializers.ufo_capture_output
+from rest_server.serializers.ufo_capture_output import UfoCaptureOutputNestedSerializer, \
+    short_description_of_data as ufo_short_description_of_data
 from rest_server.serializers.cpu_status import CpuStatusNestedSerializer
 from rest_server.serializers.disk_usage import DiskUsageNestedSerializer
 from rest_server.serializers.memory_usage import MemoryUsageNestedSerializer
@@ -29,7 +29,7 @@ ACQUIRED_MODULES = [
 ]
 
 INTEGRITY_ERROR_DATA_DESCRIPTION_FUNCS = dict(
-    ufo_capture_output=rest_server.serializers.ufo_capture_output.short_description_of_data
+    ufo_capture_output=ufo_short_description_of_data
 )
 
 
