@@ -182,7 +182,7 @@ LOGGING = {
             'formatter': 'verbose',
         },
         'operations_log_file': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': str(LOG_DIR / 'operations.log'),
             'formatter': 'verbose',
@@ -195,7 +195,7 @@ LOGGING = {
     'loggers': {
         'dims_monitor_server': {
             'handlers': ['operations_log_file'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False
         }
     }

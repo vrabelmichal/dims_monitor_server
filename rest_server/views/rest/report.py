@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import re
+import traceback
 
 from rest_framework import generics, status, permissions
 from rest_framework.authentication import BasicAuthentication, TokenAuthentication
@@ -12,6 +13,8 @@ from rest_framework.views import APIView
 from rest_server.models import Report, Station
 from rest_server.serializers import ReportNestedSerializer
 
+
+OPERATIONS_LOGGER = logging.getLogger('dims_monitor_server.rest_server.rest.report')
 
 class HasCreateReportPermission(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -94,7 +97,7 @@ class ComplexReportList(APIView):
                 start_utc=request.data['start_utc'],
                 post_utc=request.data['post_utc'],
                 hash=request.data['hash'],
-                retrieved_utc=datetime.datetime.utcnow(),
+                retrieved_utc=datetime.datetime.utcnow(),  # !!!! suspicious
                 station=users_station.name,
                 **measurements_dict
             )
@@ -109,6 +112,11 @@ class ComplexReportList(APIView):
                 return Response(data=dict(status='Created'), status=status.HTTP_201_CREATED)
 
         except Exception as e:
+            OPERATIONS_LOGGER.debug(
+                'Exception caught while handling post request %s: %s. Traceback: %s',
+                e.__class__.__name__, str(e),
+                traceback.format_exc()
+            )
             return Response({e.__class__.__name__: str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(rns.errors, status=status.HTTP_400_BAD_REQUEST)
