@@ -112,7 +112,7 @@ class ComplexReportList(APIView):
                 return Response(data=dict(status='Created'), status=status.HTTP_201_CREATED)
 
         except Exception as e:
-            OPERATIONS_LOGGER.debug(
+            OPERATIONS_LOGGER.warning(
                 'Exception caught while handling post request %s: %s. Traceback: %s',
                 e.__class__.__name__, str(e),
                 traceback.format_exc()
