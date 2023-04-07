@@ -50,6 +50,8 @@ class ComplexReportList(APIView):
             if k not in request.data:
                 return Response(data=dict(status=f'Missing attribute {k}'), status=status.HTTP_400_BAD_REQUEST)
 
+        users_station = None
+
         try:
             data_compression = None
             if 'compression' in request.data:
@@ -113,7 +115,13 @@ class ComplexReportList(APIView):
 
         except Exception as e:
             OPERATIONS_LOGGER.warning(
-                'Exception caught while handling post request %s: %s. Traceback: %s',
+                'Exception caught while handling post request. '
+                'Request by: %s (station: %s). '
+                'Report start_utc: %s, post_utc: %s, hash: %s. '
+                'Exception %s: %s. '
+                'Traceback: %s',
+                request.user.username, users_station.name if users_station is not None else 'None',
+                str(request.data['start_utc']), str(request.data['post_utc']), str(request.data['hash']),
                 e.__class__.__name__, str(e),
                 traceback.format_exc()
             )
