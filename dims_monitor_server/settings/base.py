@@ -166,11 +166,13 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'format': '{asctime} {levelname:<7} {module} {process:d} {thread:d} {message}',
+            'style': '{',
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
         'simple': {
-            'format': '{levelname} {asctime} {message}',
+            'format': '{asctime} {levelname:<7} {message}',
+            'style': '{',
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
     },
