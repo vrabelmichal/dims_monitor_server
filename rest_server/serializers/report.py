@@ -10,6 +10,7 @@ from rest_server.models import Report, Station
 from rest_server.serializers.env_log_measurement import EnvironmentLogUploadSerializer
 from rest_server.serializers.process import ProcessSerializer
 from rest_server.serializers.ufo_capture_output import UfoCaptureOutputNestedSerializer
+import rest_server.serializers.ufo_capture_output
 from rest_server.serializers.cpu_status import CpuStatusNestedSerializer
 from rest_server.serializers.disk_usage import DiskUsageNestedSerializer
 from rest_server.serializers.memory_usage import MemoryUsageNestedSerializer
@@ -26,6 +27,10 @@ ACQUIRED_MODULES = [
     'ufo_capture_output',
     'environment_log'
 ]
+
+INTEGRITY_ERROR_DATA_DESCRIPTION_FUNCS = dict(
+    ufo_capture_output=rest_server.serializers.ufo_capture_output.short_description_of_data
+)
 
 
 class ReportNestedSerializer(serializers.ModelSerializer):
@@ -127,11 +132,19 @@ class ReportNestedSerializer(serializers.ModelSerializer):
                             # entry_hash = hash(frozenset(sorted(module_data_entry.items())))
                             # integrity_errors_dict[module_name].append(entry_hash)
                             integrity_errors_dict[module_name].append(module_data_entry)
+
                             # try:
                             #     module_data_entry_str = json.dumps(module_data_entry)
                             # except Exception as e:
                             #     module_data_entry_str = '[Failed to encode:]' + str(module_data_entry)
-                            module_data_entry_str = '[Failed due to integrity error:]' + str(module_data_entry)
+
+                            module_data_entry_str = '[Integrity error]'
+                            if module_name in INTEGRITY_ERROR_DATA_DESCRIPTION_FUNCS:
+                                module_data_entry_str += \
+                                    INTEGRITY_ERROR_DATA_DESCRIPTION_FUNCS[module_name](module_data_entry)
+                            else:
+                                module_data_entry_str += str(module_data_entry)
+
                             maybe_dots_str = '...' if len(module_data_entry_str) > 255 else ''
                             self._logger.warning(
                                 f'Integrity error in report #{report.id} is being ignored '

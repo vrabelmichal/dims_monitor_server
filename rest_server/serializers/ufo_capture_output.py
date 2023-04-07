@@ -33,6 +33,9 @@ class UfoCaptureOutputNestedSerializer(serializers.ModelSerializer):
         )
 
 
+def short_description_of_data(data, keys=('clip_filename',)):
+    return ",".join([f'{k}:"{str(k)}"' for k in keys])
+
 
 # All fields except "station"
 # "station" is taken from the report(
