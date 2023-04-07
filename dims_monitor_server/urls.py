@@ -27,6 +27,7 @@ urlpatterns = [
     path('', rest_server.views.web.latest_reports, name='latest_reports'),
     path('latest-reports-with-events', rest_server.views.web.latest_reports_with_events, name='latest_reports_with_events'),
     path('ufo-thumbnails-maintenance', rest_server.views.web.ufo_thumbnails_maintenance, name='ufo_thumbnails_maintenance'),
+    path('test', rest_server.views.web.test, name='test'),
     path('report/<int:report_id>', rest_server.views.web.report_detail, name='report_detail'),
     path('accounts/', include('django.contrib.auth.urls')),
 
