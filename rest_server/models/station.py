@@ -11,8 +11,13 @@ class Station(models.Model):
     priority = models.IntegerField(default=0)
     observing_station = models.ForeignKey(ObservingStation, on_delete=models.RESTRICT, null=True)
     camera = models.CharField(max_length=50, null=True, blank=True)
+    type = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return f'Reporting device (station) "{self.name}"'
 
-    # Index has been created manually so the code here is omitted
+    class Meta:
+        indexes = [
+            models.Index(fields=['type']),
+            models.Index(fields=['camera']),
+        ]
