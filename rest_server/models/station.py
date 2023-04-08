@@ -9,7 +9,7 @@ class Station(models.Model):
     """
     name = models.CharField(max_length=50, unique=True)
     priority = models.IntegerField(default=0)
-    observing_station = models.ForeignKey(ObservingStation, on_delete=models.RESTRICT, null=True)
+    observing_station = models.ForeignKey(ObservingStation, on_delete=models.RESTRICT, null=True, blank=True)
     camera = models.CharField(max_length=50, null=True, blank=True)
     type = models.CharField(max_length=50, null=True, blank=True)
 
