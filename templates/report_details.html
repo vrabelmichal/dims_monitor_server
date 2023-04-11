@@ -187,6 +187,10 @@
                              <dt class="col-sm-3">Captured hour</dt>  <dd class="col-sm-9">{{ environment_log_upload.captured_hour|date:'Y-m-d H:i:s' }}</dd>
                              <dt class="col-sm-3">Log filename</dt>  <dd class="col-sm-9">{{ environment_log_upload.log_filename }}</dd>
                              <dt class="col-sm-3">Historical</dt>  <dd class="col-sm-9">{{ environment_log_upload.is_historical }}</dd>
+                             {% if environment_log_upload.type %}<dt class="col-sm-3">Type</dt>  <dd class="col-sm-9">
+                             {% if environment_log_upload.type.label %}{{ environment_log_upload.type.label }} (<code>{{ environment_log_upload.type.name }}</code>)
+                             {% else %}{{ environment_log_upload.type.name }}{% endif %}
+                             </dd>{% endif %}
                         </dl>
 
                         <h4>
