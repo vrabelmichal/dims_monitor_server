@@ -5,7 +5,7 @@ import pytz
 from django.db import IntegrityError, transaction
 from rest_framework import serializers
 
-from rest_server.models import Report, Station, EnvironmentLogUpload, EnvironmentLogMeasurement
+from rest_server.models import Report, Station, EnvironmentLogUpload, EnvironmentLogMeasurement, EnvironmentLogType
 
 
 class EnvironmentLogUploadSerializer(serializers.Serializer):
@@ -33,6 +33,8 @@ class EnvironmentLogUploadSerializer(serializers.Serializer):
     log_filename = serializers.CharField(required=False, allow_blank=True, default='')
 
     data_timezone = serializers.CharField(required=False, default='utc')
+    type = serializers.CharField(required=False, default='common')
+
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -48,6 +50,8 @@ class EnvironmentLogUploadSerializer(serializers.Serializer):
         data_timezone_str = validated_data.pop('data_timezone', 'utc')
         data_tzinfo = pytz.timezone(data_timezone_str)
 
+        env_log_type = validated_data.pop('type', 'common')
+
         log_upload_create_dict = dict(validated_data)
         if logfile is not None:
             log_upload_create_dict['log_filename'] = logfile.name
@@ -55,6 +59,9 @@ class EnvironmentLogUploadSerializer(serializers.Serializer):
         if data is None and logfile is None:
             raise RuntimeError('No data and no logfile were provided')
             #return None
+
+        type, type_created = EnvironmentLogType.objects.get_or_create(name=env_log_type)
+        log_upload_create_dict['type'] = type
 
         log_upload = EnvironmentLogUpload.objects.create(**log_upload_create_dict)
 

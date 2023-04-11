@@ -4,6 +4,25 @@ from rest_server.models.report import Report
 from rest_server.models.station import Station
 from rest_server.utils import model2str
 
+class EnvironmentLogType(models.Model):
+    name = models.CharField(
+        max_length=64,
+        help_text='Name identifying environment log type.',
+        unique=True
+    )
+    label = models.CharField(
+        max_length=128,
+        help_text='Label identifying environment log type.',
+        null=True,
+        blank=True
+    )
+    priority = models.IntegerField(default=0)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['label']),
+            models.Index(fields=['-priority']),
+        ]
 
 class EnvironmentLogUpload(models.Model):
     captured_hour = models.DateTimeField(
@@ -21,6 +40,8 @@ class EnvironmentLogUpload(models.Model):
 
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
+
+    type = models.ForeignKey(EnvironmentLogType, on_delete=models.RESTRICT, null=True, blank=True)
 
     class Meta:
         constraints = [
