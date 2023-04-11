@@ -16,6 +16,8 @@ from rest_server.serializers.disk_usage import DiskUsageNestedSerializer
 from rest_server.serializers.memory_usage import MemoryUsageNestedSerializer
 from rest_server.serializers.ohm_measurement import OhmSensorMeasurementNestedSerializer
 
+from django.conf import settings
+
 # MODULE_SERIALIZER_MAPPING = dict(
 #     disk_usage=DiskUsageNestedSerializer,
 #     cpu_status=CpuStatusNestedSerializer
@@ -34,7 +36,8 @@ INTEGRITY_ERROR_DATA_DESCRIPTION_FUNCS = dict(
 
 
 class ReportNestedSerializer(serializers.ModelSerializer):
-    # TODO HANDLE IF STATION IS NOT IN THE TABLE
+
+    # station is created in views.rest.report.post
     station = serializers.SlugRelatedField(
         many=False, read_only=False, required=True,
         slug_field='name', queryset=Station.objects.all()
@@ -58,11 +61,14 @@ class ReportNestedSerializer(serializers.ModelSerializer):
         required=False
     )
 
+    is_backfill = serializers.BooleanField(required=False, default=False)
+
     _logger = None
 
     class Meta:
         model = Report
-        fields = ['start_utc', 'post_utc', 'retrieved_utc', 'hash', 'station', 'attachments', *ACQUIRED_MODULES]
+        fields = ['start_utc', 'post_utc', 'retrieved_utc', 'hash', 'station', 'attachments', 'is_backfill',
+                  *ACQUIRED_MODULES]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -82,6 +88,8 @@ class ReportNestedSerializer(serializers.ModelSerializer):
             attachments = dict()
 
         integrity_errors_dict = dict()
+
+        is_backfill = validated_data.pop('is_backfill', False)
 
         with transaction.atomic():
             transaction.on_commit(lambda: self._logger.debug('ReportNestedSerializer: outer transaction commit'))
@@ -138,18 +146,20 @@ class ReportNestedSerializer(serializers.ModelSerializer):
                             # except Exception as e:
                             #     module_data_entry_str = '[Failed to encode:]' + str(module_data_entry)
 
-                            module_data_entry_str = '[Integrity error]'
-                            if module_name in INTEGRITY_ERROR_DATA_DESCRIPTION_FUNCS:
-                                module_data_entry_str += \
-                                    INTEGRITY_ERROR_DATA_DESCRIPTION_FUNCS[module_name](module_data_entry)
-                            else:
-                                module_data_entry_str += str(module_data_entry)
+                            if settings.DEBUG or not is_backfill:
+                                module_data_entry_str = '[Integrity error]'
+                                if module_name in INTEGRITY_ERROR_DATA_DESCRIPTION_FUNCS:
+                                    module_data_entry_str += \
+                                        INTEGRITY_ERROR_DATA_DESCRIPTION_FUNCS[module_name](module_data_entry)
+                                else:
+                                    module_data_entry_str += str(module_data_entry)
 
-                            maybe_dots_str = '...' if len(module_data_entry_str) > 255 else ''
-                            self._logger.warning(
-                                f'Integrity error in report #{report.id} is being ignored '
-                                f'(module: {module_name}, entry: {module_data_entry_str[:255]}{maybe_dots_str})'
-                            )
+                                maybe_dots_str = '...' if len(module_data_entry_str) > 255 else ''
+                                self._logger.log(
+                                    logging.DEBUG if self.is_backfill else logging.WARNING,
+                                    f'Integrity error in report #{report.id} is being ignored '
+                                    f'(module: {module_name}, entry: {module_data_entry_str[:255]}{maybe_dots_str})'
+                                )
 
             if len(integrity_errors_dict) == 0:
                 report.fully_processed = True  # now used to indicate processing errors
