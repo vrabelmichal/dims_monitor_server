@@ -58,6 +58,9 @@ class EnvironmentLogMeasurement(models.Model):
             models.UniqueConstraint(fields=['measurement_datetime', 'log_upload'], name='unique_pair_datetime_log_upload'),
             models.UniqueConstraint(fields=['measurement_datetime', 'station'], name='unique_pair_datetime_station'),
         ]
+        indexes = [
+            models.Index(fields=['measurement_datetime']),
+        ]
 
     measurement_datetime = models.DateTimeField(
         help_text='Datetime of the measurement.'
