@@ -47,6 +47,9 @@ class EnvironmentLogUpload(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['report', 'captured_hour'], name='unique_pair_report_captured_hour'),
         ]
+        indexes = [
+            models.Index(fields=['-captured_hour']),
+        ]
 
     def __str__(self):
         return model2str(self, None, ['captured_hour', 'station'])
