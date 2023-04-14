@@ -15,3 +15,10 @@ class Report(models.Model):
     def __str__(self):
         return (f'Station status report '
                 f'(station: "{self.station.name}", measurement started at: {self.start_utc}, data hash: {self.hash})')
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['-start_utc']),
+            models.Index(fields=['-post_utc']),
+            models.Index(fields=['-retrieved_utc']),
+        ]
