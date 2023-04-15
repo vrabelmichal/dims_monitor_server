@@ -1,7 +1,7 @@
 from django.db import models
 
 from rest_server.models.observing_station import ObservingStation
-
+from rest_server.models.disk_usage.disk_partition import DiskPartition
 
 class Station(models.Model):
     """
@@ -12,6 +12,9 @@ class Station(models.Model):
     observing_station = models.ForeignKey(ObservingStation, on_delete=models.RESTRICT, null=True, blank=True)
     camera = models.CharField(max_length=50, null=True, blank=True)
     type = models.CharField(max_length=50, null=True, blank=True)
+
+    system_partition = models.ForeignKey(DiskPartition, on_delete=models.RESTRICT, null=True, blank=True)
+    data_partition = models.ForeignKey(DiskPartition, on_delete=models.RESTRICT, null=True, blank=True)
 
     def __str__(self):
         return f'Reporting device (station) "{self.name}"'
