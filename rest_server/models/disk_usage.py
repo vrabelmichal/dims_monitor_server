@@ -1,9 +1,8 @@
 from django.db import models
 
-from rest_server.models import Report
+from rest_server.models.disk_partition import DiskPartition
+from rest_server.models.report import Report
 from rest_server.utils import model2str
-
-from .disk_partition import DiskPartition
 
 class DiskUsage(models.Model):
     class Meta:
