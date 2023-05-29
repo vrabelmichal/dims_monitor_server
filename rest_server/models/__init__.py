@@ -13,3 +13,4 @@ from rest_server.models.station import Station
 from rest_server.models.env_log_measurement import EnvironmentLogUpload, EnvironmentLogMeasurement, EnvironmentLogType
 from rest_server.models.process import Process
 from rest_server.models.observing_station import ObservingStation
+from rest_server.models.camera_status import CameraStatus

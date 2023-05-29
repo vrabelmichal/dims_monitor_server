@@ -7,6 +7,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ListSerializer
 
 from rest_server.models import Report, Station
+from rest_server.serializers.camera_status import CameraStatusNestedSerializer
 from rest_server.serializers.env_log_measurement import EnvironmentLogUploadSerializer
 from rest_server.serializers.process import ProcessSerializer
 from rest_server.serializers.ufo_capture_output import UfoCaptureOutputNestedSerializer, \
@@ -24,7 +25,7 @@ from django.conf import settings
 # )
 
 ACQUIRED_MODULES = [
-    'disk_usage', 'memory_usage', 'processes', 'cpu_status',
+    'disk_usage', 'memory_usage', 'processes', 'cpu_status', 'camera_status',
     'ohm',
     'ufo_capture_output',
     'environment_log'
@@ -46,6 +47,7 @@ class ReportNestedSerializer(serializers.ModelSerializer):
     disk_usage = DiskUsageNestedSerializer(many=True, read_only=False, required=False)
     memory_usage = MemoryUsageNestedSerializer(many=True, read_only=False, required=False)
     cpu_status = CpuStatusNestedSerializer(many=True, read_only=False, required=False)
+    camera_status = CameraStatusNestedSerializer(many=True, read_only=False, required=False)
     ohm = OhmSensorMeasurementNestedSerializer(many=True, read_only=False, required=False)
     ufo_capture_output = UfoCaptureOutputNestedSerializer(many=True, read_only=False, required=False)
     environment_log = EnvironmentLogUploadSerializer(many=True, read_only=False, required=False)
