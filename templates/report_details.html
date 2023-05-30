@@ -44,6 +44,8 @@
 
         <dt class="col-sm-3">cpu_status.all.count</dt>
         <dd class="col-sm-9">{{ cpu_status.all.count }}</dd>
+        <dt class="col-sm-3">camera_status.all.count</dt>
+        <dd class="col-sm-9">{{ camera_status.all.count }}</dd>
         <dt class="col-sm-3">disk_usage.all.count</dt>
         <dd class="col-sm-9">{{ disk_usage.all.count }}</dd>
         <dt class="col-sm-3">memory_usage.all.count</dt>
@@ -67,6 +69,7 @@
             <li class="nav-item"><a class="nav-link" href="#disk_usage">disk_usage</a></li>
             <li class="nav-item"><a class="nav-link" href="#memory_usage">memory_usage</a></li>
             <li class="nav-item"><a class="nav-link" href="#ohm">ohm (Open Hardware Monitor)</a></li>
+            <li class="nav-item"><a class="nav-link" href="#camera_status">camera_status</a></li>
         </ul>
     </nav>
 
@@ -343,6 +346,29 @@
                 </div>
             {% else %}
             <p class="mb-4">No records</p>
+            {% endif %}
+        </section>
+
+        <section id="camera_status">
+            <h2>camera_status</h2>
+
+            {% if camera_status.all.count > 0 %}
+                {% for camera_status_entry in camera_status.all %}
+                <div class="card border-light shadow-sm mb-4">
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-3">gain</dt>  <dd class="col-sm-9">{{ camera_status_entry.gain }}</dd>
+                            <dt class="col-sm-3">iris       <dd class="col-sm-9">{{ camera_status_entry.iris }}</dd>
+                            <dt class="col-sm-3">iris_raw   <dd class="col-sm-9">{{ camera_status_entry.iris_raw }}</dd>
+                            <dt class="col-sm-3">one_over_shutter_speed <dd class="col-sm-9">{{ camera_status_entry.one_over_shutter_speed }}</dd>
+                            <dt class="col-sm-3">exposure_time <dd class="col-sm-9">{{ camera_status_entry.exposure_time }}</dd>
+                            <dt class="col-sm-3">gamma      <dd class="col-sm-9">{{ camera_status_entry.gamma }}</dd>
+                        </dl>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="mb-4">No records</p>
             {% endif %}
         </section>
 

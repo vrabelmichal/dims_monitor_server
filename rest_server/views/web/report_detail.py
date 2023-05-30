@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.template import loader
 
 from rest_server.models import Report, CpuStatus, DiskUsage, MemoryUsage, OhmSensorMeasurement, UfoCaptureOutputEntry, \
-    EnvironmentLogMeasurement, EnvironmentLogUpload, Process
+    EnvironmentLogMeasurement, EnvironmentLogUpload, Process, CameraStatus
 
 
 @login_required
@@ -37,6 +37,8 @@ def report_detail(request, report_id):
 
     processes = Process.objects.filter(report_id=report_id).order_by('-cpu_percent')
 
+    camera_status = CameraStatus.objects.filter(report_id=report_id)
+
     template = loader.get_template('report_details.html')  # getting our template
 
     return HttpResponse(template.render(
@@ -49,6 +51,7 @@ def report_detail(request, report_id):
             ufo_caputre_output=ufo_caputre_output,
             environment_log=environment_log,
             processes=processes,
+            camera_status=camera_status,
             max_count_of_latest_environment_log_measurements=max_count_of_latest_environment_log_measurements,
             segment='report_detail',
         ),
