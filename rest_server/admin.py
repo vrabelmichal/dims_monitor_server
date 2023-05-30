@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from rest_server.models import DiskPartition, DiskUsage, CpuStatus, OhmSensorMeasurement, OhmHardwareInformation, \
     OhmSensorInformation, OhmSensorParameter, UfoCaptureOutputEntry, EnvironmentLogUpload, EnvironmentLogType, \
-    Station, ObservingStation
+    Station, ObservingStation, CameraStatus
 from rest_server.models import Report
 
 admin.site.register(Report)
@@ -10,6 +10,7 @@ admin.site.register(Station)
 admin.site.register(DiskPartition)
 admin.site.register(DiskUsage)
 admin.site.register(CpuStatus)
+admin.site.register(CameraStatus)
 admin.site.register(OhmSensorMeasurement)
 admin.site.register(OhmHardwareInformation)
 admin.site.register(OhmSensorInformation)
