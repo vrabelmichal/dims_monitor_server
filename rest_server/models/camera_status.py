@@ -36,4 +36,4 @@ class CameraStatus(models.Model):
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
 
     def __str__(self):
-        return model2str(self, fields=['gain','iris','shutter_speed','gamma',])
+        return model2str(self, fields=['gain','iris','one_over_shutter_speed','gamma',])
